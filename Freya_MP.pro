@@ -6,4 +6,5 @@
 
 TEMPLATE = subdirs
 
-SUBDIRS += FreyaLib FreyaIM FreyaMS
+SUBDIRS += FreyaLib FreyaIM
+#SUBDIRS += FreyaMS
