@@ -1,0 +1,63 @@
+QLabel#LoginPublishLab
+{
+    background-color: white;
+}
+FreyaBaseWidget#LoginWidget
+{
+    background-color: #ebf2f9;
+}
+FreyaPortrait#PortraitBtn
+{
+    padding: 0px;
+    border-top: 4px solid qlineargradient(spread:pad, x1:0, y1:1, x2:0, y2:0, stop:0 lightblue, stop:1 transparent);
+    border-left: 4px solid qlineargradient(spread:pad, x1:1, y1:0, x2:0, y2:0, stop:0 lightblue, stop:1 transparent);
+    border-bottom: 4px solid qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 lightblue, stop:1 transparent);
+    border-right: 4px solid qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0 lightblue, stop:1 transparent);
+}
+FreyaPortrait#PortraitBtn:hover
+{
+    border-top: 4px solid qlineargradient(spread:pad, x1:0, y1:1, x2:0, y2:0, stop:0 lightgreen, stop:1 transparent);
+    border-left: 4px solid qlineargradient(spread:pad, x1:1, y1:0, x2:0, y2:0, stop:0 lightgreen, stop:1 transparent);
+    border-bottom: 4px solid qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 lightgreen, stop:1 transparent);
+    border-right: 4px solid qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0 lightgreen, stop:1 transparent);
+}
+FreyaPortrait#PortraitBtn:pressed
+{
+    padding: 0px;
+    border-top: 4px solid qlineargradient(spread:pad, x1:0, y1:1, x2:0, y2:0, stop:0 lightblue, stop:1 transparent);
+    border-left: 4px solid qlineargradient(spread:pad, x1:1, y1:0, x2:0, y2:0, stop:0 lightblue, stop:1 transparent);
+    border-bottom: 4px solid qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 lightblue, stop:1 transparent);
+    border-right: 4px solid qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0 lightblue, stop:1 transparent);
+}
+FreyaPortrait#PortraitBtn:disabled
+{
+    border-top: 4px solid qlineargradient(spread:pad, x1:0, y1:1, x2:0, y2:0, stop:0 grey, stop:0.7 transparent, stop:1 transparent);
+    border-left: 4px solid qlineargradient(spread:pad, x1:1, y1:0, x2:0, y2:0, stop:0 grey, stop:0.7 transparent, stop:1 transparent);
+    border-bottom: 4px solid qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 grey, stop:0.7 transparent, stop:1 transparent);
+    border-right: 4px solid qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0 grey, stop:0.7 transparent, stop:1 transparent);
+}
+FreyaBaseWidget#LoginSetWidget
+{
+}
+QLabel#LoginTipsLab
+{
+    background-color: rgba(255, 255, 255, 200);
+}
+
+QWidget#RegisterInforWidget
+{
+    background-color: white;
+}
+
+QToolButton#IDCGenKeepBtn, QToolButton#IDCMaleBtn, QToolButton#IDCFemaleBtn
+{
+    border: 1px solid green;
+}
+QToolButton#IDCGenKeepBtn:checked, QToolButton#IDCMaleBtn:checked, QToolButton#IDCFemaleBtn:checked
+{
+    border: 1px solid red;
+}
+QToolButton#IDCGenKeepBtn:checked:disabled, QToolButton#IDCMaleBtn:checked:disabled, QToolButton#IDCFemaleBtn:checked:disabled
+{
+    border: 1px solid blue;
+}
