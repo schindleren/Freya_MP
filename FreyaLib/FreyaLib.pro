@@ -57,3 +57,5 @@ HEADERS += include/freyalib.h\
     include/experience/roundedportrait.h \
     include/base/freyabaseextension.h \
     include/base/freyabaseplugin.h
+
+RC_FILE += freyalib.rc
