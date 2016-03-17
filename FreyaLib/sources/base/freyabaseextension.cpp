@@ -3,7 +3,7 @@
 #include <QtMath>
 
 FreyaPluginPusher::FreyaPluginPusher(QString PluginID, QObject *parent) :
-    QLocalSocket(parent), m_PluginID(PluginID)
+    QLocalSocket(parent), m_MsgAuth(0), m_CmdAuth(0), m_PluginID(PluginID)
 {
     qDebug()<<"Temp=>"<<"FreyaPluginPusher:ID:"<<PluginID;
     connect(this, SIGNAL(stateChanged(QLocalSocket::LocalSocketState)), SLOT(OnStateChanged(QLocalSocket::LocalSocketState)));
@@ -41,6 +41,7 @@ void FreyaPluginPusher::PusherExcute(FreyaBaseData *pData)
 void FreyaPluginPusher::OnReadyRead()
 {
     FreyaBaseData data = FreyaBaseData::Unserialize(readAll());
+    qDebug()<<"DDDDDDDDDDDDDDDDDDD"<<hex<<data.command;
     FreyaBaseControl *pControl = FreyaBaseControl::GetFreyaControl();
     if(FREYALIB_CMD_MSGAUTHREQUEST == data.command)
     {
@@ -50,7 +51,7 @@ void FreyaPluginPusher::OnReadyRead()
             FreyaBaseData *pData = pControl->FindBaseData(code);
             if(pData)
             {
-                m_MsgAuth = (m_MsgAuth | pData->command) % 0x10;
+                m_MsgAuth = (m_MsgAuth | pData->arguments.toInt());
             }
         }
         qDebug()<<"PluginID:"<<m_PluginID<<"MsgAuth:"<<hex<<m_MsgAuth;
@@ -63,7 +64,7 @@ void FreyaPluginPusher::OnReadyRead()
             FreyaBaseData *pData = pControl->FindBaseData(code);
             if(pData)
             {
-                m_CmdAuth = (m_CmdAuth | pData->command) / 0x10;
+                m_CmdAuth = (m_CmdAuth | pData->arguments.toInt());
             }
         }
         qDebug()<<"PluginID:"<<m_PluginID<<"CmdAuth:"<<hex<<m_CmdAuth;
@@ -128,14 +129,14 @@ void FreyaBaseExtension::DefineAuthCode(const QStringList &MsgAuth, const QStrin
     {
         FreyaBaseData *pData = new FreyaBaseData;
         pData->dataID = MsgAuth.at(i);
-        pData->command = qPow(2, i); //0x01 0x02 0x04 0x08
+        pData->arguments = qPow(2, i); //0x01 0x02 0x04 0x08
         pControl->InsertBaseData(pData);
     }
     for(int j = 0; j < qMin(CmdAuth.size(), 4); ++j)
     {
         FreyaBaseData *pData = new FreyaBaseData;
         pData->dataID = CmdAuth.at(j);
-        pData->command = qPow(2, j) * 0x10; //0x10 0x20 0x40 0x80
+        pData->arguments = qPow(2, j) * 0x10; //0x10 0x20 0x40 0x80
         pControl->InsertBaseData(pData);
     }
 }

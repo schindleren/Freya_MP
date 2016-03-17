@@ -45,6 +45,24 @@ void FreyaBasePlugin::ImportCmdAuth(const QStringList &AuthCode)
     }
 }
 
+void FreyaBasePlugin::Execute(const quint64 &command)
+{
+    if(m_Pusher)
+    {
+        FreyaBaseData data;
+        data.command = command;
+        m_Pusher->write(FreyaBaseData::Serialize(data));
+    }
+}
+
+void FreyaBasePlugin::Execute(FreyaBaseData *pData)
+{
+    if(m_Pusher)
+    {
+        m_Pusher->write(FreyaBaseData::Serialize(*pData));
+    }
+}
+
 void FreyaBasePlugin::OnReadyRead()
 {
     FreyaBaseData data = FreyaBaseData::Unserialize(readAll());

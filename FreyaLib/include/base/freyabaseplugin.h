@@ -19,6 +19,10 @@ public:
     void ImportMsgAuth(const QStringList &AuthCode);
     void ImportCmdAuth(const QStringList &AuthCode);
 
+protected:
+    virtual void Execute(const quint64 &command);
+    virtual void Execute(FreyaBaseData *pData);
+
 signals:
     void ToPluginConnected(bool);
 
