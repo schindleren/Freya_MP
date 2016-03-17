@@ -18,7 +18,7 @@ class FreyaPluginPusher :public QLocalSocket
 {
     Q_OBJECT
 public:
-    explicit FreyaPluginPusher(QString PluginID, QObject *parent = 0);
+    explicit FreyaPluginPusher(QString PluginID, FreyaBaseControl *pControl = NULL, QObject *parent = 0);
 
     void PusherExcute(const quint64 &command);
     void PusherExcute(FreyaBaseData *pData);
@@ -31,9 +31,10 @@ private slots:
     void OnStateChanged(QLocalSocket::LocalSocketState state);
 
 private:
-    int m_MsgAuth;
-    int m_CmdAuth;
-    QString m_PluginID;
+    int                                 m_MsgAuth;
+    int                                 m_CmdAuth;
+    QString                             m_PluginID;
+    FreyaBaseControl                    *m_FreyaControl;
 };
 
 class FREYALIBSHARED_EXPORT FreyaBaseExtension : public QLocalServer, public FreyaBaseAction

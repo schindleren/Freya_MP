@@ -16,7 +16,7 @@ public:
     virtual void Execute(const quint64 &command);
     virtual void Execute(FreyaBaseData *pData);
 
-private:
+protected:
     FreyaBaseControl *m_FreyaBaseControl;
 };
 

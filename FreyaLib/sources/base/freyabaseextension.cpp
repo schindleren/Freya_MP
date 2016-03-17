@@ -2,8 +2,8 @@
 #include "freyabaseextension.h"
 #include <QtMath>
 
-FreyaPluginPusher::FreyaPluginPusher(QString PluginID, QObject *parent) :
-    QLocalSocket(parent), m_MsgAuth(0), m_CmdAuth(0), m_PluginID(PluginID)
+FreyaPluginPusher::FreyaPluginPusher(QString PluginID, FreyaBaseControl *pControl, QObject *parent) :
+    QLocalSocket(parent), m_MsgAuth(0), m_CmdAuth(0), m_PluginID(PluginID), m_FreyaControl(pControl)
 {
     qDebug()<<"Temp=>"<<"FreyaPluginPusher:ID:"<<PluginID;
     connect(this, SIGNAL(stateChanged(QLocalSocket::LocalSocketState)), SLOT(OnStateChanged(QLocalSocket::LocalSocketState)));
@@ -41,14 +41,12 @@ void FreyaPluginPusher::PusherExcute(FreyaBaseData *pData)
 void FreyaPluginPusher::OnReadyRead()
 {
     FreyaBaseData data = FreyaBaseData::Unserialize(readAll());
-    qDebug()<<"DDDDDDDDDDDDDDDDDDD"<<hex<<data.command;
-    FreyaBaseControl *pControl = FreyaBaseControl::GetFreyaControl();
     if(FREYALIB_CMD_MSGAUTHREQUEST == data.command)
     {
         QStringList AuthCodeList = data.arguments.toStringList();
         foreach (const QString &code, AuthCodeList)
         {
-            FreyaBaseData *pData = pControl->FindBaseData(code);
+            FreyaBaseData *pData = m_FreyaControl->FindBaseData(code);
             if(pData)
             {
                 m_MsgAuth = (m_MsgAuth | pData->arguments.toInt());
@@ -61,7 +59,7 @@ void FreyaPluginPusher::OnReadyRead()
         QStringList AuthCodeList = data.arguments.toStringList();
         foreach (const QString &code, AuthCodeList)
         {
-            FreyaBaseData *pData = pControl->FindBaseData(code);
+            FreyaBaseData *pData = m_FreyaControl->FindBaseData(code);
             if(pData)
             {
                 m_CmdAuth = (m_CmdAuth | pData->arguments.toInt());
@@ -74,7 +72,7 @@ void FreyaPluginPusher::OnReadyRead()
         if(m_CmdAuth & data.command)
         {
             qDebug()<<"Allow up command:"<<data.command<<"From:"<<m_PluginID;
-            pControl->RequestExecution(&data, parent());
+            m_FreyaControl->RequestExecution(&data, parent());
         }
     }
 }
@@ -124,20 +122,19 @@ FreyaBaseExtension::FreyaBaseExtension(QString PlatformID, FreyaBaseControl *pCo
 
 void FreyaBaseExtension::DefineAuthCode(const QStringList &MsgAuth, const QStringList &CmdAuth)
 {
-    FreyaBaseControl *pControl = FreyaBaseControl::GetFreyaControl();
     for(int i = 0; i < qMin(MsgAuth.size(), 4); ++i)
     {
         FreyaBaseData *pData = new FreyaBaseData;
         pData->dataID = MsgAuth.at(i);
         pData->arguments = qPow(2, i); //0x01 0x02 0x04 0x08
-        pControl->InsertBaseData(pData);
+        m_FreyaBaseControl->InsertBaseData(pData);
     }
     for(int j = 0; j < qMin(CmdAuth.size(), 4); ++j)
     {
         FreyaBaseData *pData = new FreyaBaseData;
         pData->dataID = CmdAuth.at(j);
         pData->arguments = qPow(2, j) * 0x10; //0x10 0x20 0x40 0x80
-        pControl->InsertBaseData(pData);
+        m_FreyaBaseControl->InsertBaseData(pData);
     }
 }
 
@@ -189,7 +186,7 @@ void FreyaBaseExtension::OnReadyRead()
             qDebug()<<"Temp=>"<<"FreyaBaseExtension:"<<hex<<FREYALIB_CMD_CONNECTREQUEST<<PluginID;
             if(m_CurrentPluginID == PluginID)
             {
-                FreyaPluginPusher *pPusher = new FreyaPluginPusher(PluginID, this);
+                FreyaPluginPusher *pPusher = new FreyaPluginPusher(PluginID, m_FreyaBaseControl, this);
                 connect(pPusher, SIGNAL(ToDisconnected()), this, SLOT(OnPusherDisconnected()));
                 m_PusherList.append(pPusher);
             }
