@@ -17,8 +17,7 @@
 #define FREYALIB_CMD_PLUGINRESULT       0x0000000020000000//"FreyaLib_Cmd_Plug-inResult"
 #define FREYALIB_CMD_CONNECTREQUEST     0x0000000030000000//"FreyaLib_Cmd_ConnectRequest"
 #define FREYALIB_CMD_CONNECTRESULT      0x0000000040000000//"FreyaLib_Cmd_ConnectResult"
-#define FREYALIB_CMD_MSGAUTHREQUEST     0x0000000050000000//"FreyaLib_Cmd_MessageAuthRequest"
-#define FREYALIB_CMD_CMDAUTHREQUEST     0x0000000060000000//"FreyaLib_Cmd_CommandAuthRequest"
+#define FREYALIB_CMD_PLUGINAUTHREQUEST  0x0000000050000000//"FreyaLib_Cmd_PluginAuthRequest"
 
 #define FREYALIB_TYP_CMD                "FreyaLib_Type_Command"
 #define FREYALIB_TYP_ARG                "FreyaLib_Type_Arguments"
@@ -27,6 +26,7 @@
 #define FREYALIB_TYP_PLUGINNAME         "FreyaLib_Type_PluginName"
 #define FREYALIB_TYP_PLUGINPATH         "FreyaLib_Type_PluginPath"
 #define FREYALIB_TYP_PLUGINCFGMD5       "FreyaLib_Type_PluginCfgMd5"
-#define FREYALIB_TYP_PLUGINAUTH         "FreyaLib_Type_PluginAuth"
+#define FREYALIB_TYP_PLUGINMSGAUTH      "FreyaLib_Type_PluginMsgAuth"
+#define FREYALIB_TYP_PLUGINCMDAUTH      "FreyaLib_Type_PluginCmdAuth"
 
 #endif // FREYALIB_GLOBAL_H

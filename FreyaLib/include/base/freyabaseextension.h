@@ -8,13 +8,14 @@
 
 #include <QLocalServer>
 #include <QLocalSocket>
+#include <QThread>
 
 /*
  * Types of support
  * (See document about Qt5.4 - QJsonValue::fromVariant)
  */
 
-class FreyaPluginPusher :public QLocalSocket
+class FreyaPluginPusher : public QThread
 {
     Q_OBJECT
 public:
@@ -22,6 +23,9 @@ public:
 
     void PusherExcute(const quint64 &command);
     void PusherExcute(FreyaBaseData *pData);
+
+protected:
+    virtual void run();
 
 signals:
     void ToDisconnected();
@@ -31,10 +35,12 @@ private slots:
     void OnStateChanged(QLocalSocket::LocalSocketState state);
 
 private:
+    QLocalSocket                        *m_Pusher;
     int                                 m_MsgAuth;
     int                                 m_CmdAuth;
     QString                             m_PluginID;
     FreyaBaseControl                    *m_FreyaControl;
+    QStringList                         m_DataIDList;
 };
 
 class FREYALIBSHARED_EXPORT FreyaBaseExtension : public QLocalServer, public FreyaBaseAction
