@@ -39,7 +39,7 @@ bool FreyaBasePlugin::ImportPluginAuth(const QStringList &MsgCode, const QString
     return false;
 }
 
-void FreyaBasePlugin::Execute(const quint64 &command)
+void FreyaBasePlugin::PluginWrite(const quint64 &command)
 {
     if(m_Pusher)
     {
@@ -49,12 +49,20 @@ void FreyaBasePlugin::Execute(const quint64 &command)
     }
 }
 
-void FreyaBasePlugin::Execute(FreyaBaseData *pData)
+void FreyaBasePlugin::PluginWrite(FreyaBaseData *pData)
 {
     if(m_Pusher)
     {
         m_Pusher->write(FreyaBaseData::Serialize(*pData));
     }
+}
+
+void FreyaBasePlugin::Execute(const quint64 &/*command*/)
+{
+}
+
+void FreyaBasePlugin::Execute(FreyaBaseData */*pData*/)
+{
 }
 
 void FreyaBasePlugin::OnReadyRead()
@@ -86,6 +94,6 @@ void FreyaBasePlugin::OnPluginReadyRead()
     }
     else
     {
-        FREYA_REQUESTEXECUTION(&data);
+        m_FreyaBaseControl->RequestExecution(&data, this);
     }
 }

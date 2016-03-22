@@ -18,6 +18,9 @@ public:
     bool PluginConnected();
     bool ImportPluginAuth(const QStringList &MsgCode, const QStringList &CmdCode);
 
+    void PluginWrite(const quint64 &command);
+    void PluginWrite(FreyaBaseData *pData);
+
 protected:
     virtual void Execute(const quint64 &command);
     virtual void Execute(FreyaBaseData *pData);
