@@ -29,6 +29,7 @@ protected:
 
 signals:
     void ToDisconnected();
+    void ToPluginRequest(FreyaBaseData pData);
 
 private slots:
     void OnReadyRead();
@@ -58,10 +59,12 @@ private slots:
     void OnPluginRequest();
     void OnReadyRead();
     void OnPusherDisconnected();
+    void OnPuserRequest(FreyaBaseData pData);
 
 private:
     QList<FreyaPluginPusher*>           m_PusherList;
     QString                             m_CurrentPluginID;
+    FreyaBaseControl                    *m_FreyaControl;
 };
 
 #endif // FREYABASEEXTENSION_H

@@ -5,6 +5,7 @@
 
 FreyaPublicRegister::FreyaPublicRegister()
 {
+    qRegisterMetaType<FreyaBaseData>("FreyaBaseData");
 }
 
 bool FreyaPublicRegister::InsertBaseData(FreyaBaseData *pData)
