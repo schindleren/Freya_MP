@@ -35,6 +35,7 @@ SingleApplication::SingleApplication(QString AppKey, int Count, QObject *parent)
     m_TimeLine->setSingleShot(true);
     connect(m_TimeLine, SIGNAL(timeout()), this, SLOT(OnReturnState()));
     m_SysResource = new SysSemaphore(AppKey, Count, this);
+    connect(m_SysResource, SIGNAL(finished()), this, SLOT(OnReturnState()));
     m_SysResource->start();
     m_TimeLine->start(TIMERINTERVAL);
 }
@@ -49,14 +50,12 @@ SingleApplication::SingleApplication(QString AppKey, int Count, QObject *parent)
 ****************************************************/
 void SingleApplication::OnReturnState()
 {
-    emit ToReturnState(m_SysResource->SemaphoreState());
     if(m_SysResource->isRunning())
     {
         disconnect(m_SysResource, SIGNAL(finished()), this, SLOT(OnReturnState()));
         m_SysResource->terminate();
     }
-    if(m_TimeLine->isActive())
-    {
-        m_TimeLine->stop();
-    }
+    m_TimeLine->stop();
+    emit ToReturnState(m_SysResource->SemaphoreState());
+
 }
