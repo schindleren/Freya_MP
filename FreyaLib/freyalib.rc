@@ -5,8 +5,8 @@
 # endif
 
 VS_VERSION_INFO VERSIONINFO
-    FILEVERSION 2,0,0,3
-    PRODUCTVERSION 2,0,0,3
+    FILEVERSION 2,1,0,4
+    PRODUCTVERSION 2,1,0,4
     FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
     FILEFLAGS VS_FF_DEBUG
@@ -23,11 +23,11 @@ VS_VERSION_INFO VERSIONINFO
             BEGIN
                 VALUE "CompanyName", "SchindlerenDesign\0"
                 VALUE "FileDescription", "Freya¿ò¼Ü\0"
-                VALUE "FileVersion", "2.0.0.3\0"
+                VALUE "FileVersion", "2.1.0.4\0"
                 VALUE "LegalCopyright", "Copyright (C) SchindlerenDesign\0"
                 VALUE "OriginalFilename", "FreyaLib.dll\0"
                 VALUE "ProductName", "FreyaLib\0"
-                VALUE "ProductVersion", "2.0.0.3\0"
+                VALUE "ProductVersion", "2.1.0.4\0"
             END
         END
         BLOCK "VarFileInfo"

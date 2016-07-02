@@ -11,7 +11,7 @@ TARGET = $$FREYALIB_NAME
 
 TEMPLATE = lib
 
-VERSION = 2.0.0.0
+VERSION = 2.1.0.4
 
 DEFINES += FREYALIB_LIBRARY
 
@@ -36,7 +36,8 @@ SOURCES += sources/freyalib.cpp \
     sources/base/freyacryptogram.cpp \
     sources/experience/roundedportrait.cpp \
     sources/base/freyabaseextension.cpp \
-    sources/base/freyabaseplugin.cpp
+    sources/base/freyabaseplugin.cpp \
+    sources/base/freyabaseactionex.cpp
 
 HEADERS += include/freyalib.h\
     include/freyalib_global.h \
@@ -56,6 +57,7 @@ HEADERS += include/freyalib.h\
     include/base/freyacryptogram.h \
     include/experience/roundedportrait.h \
     include/base/freyabaseextension.h \
-    include/base/freyabaseplugin.h
+    include/base/freyabaseplugin.h \
+    include/base/freyabaseactionex.h
 
 RC_FILE += freyalib.rc
