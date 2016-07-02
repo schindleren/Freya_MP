@@ -109,13 +109,12 @@ void FreyaIM::OnPluginConnected(bool isConnected)
 {
     if(isConnected)
     {
-        m_Plugin->ImportMsgAuth(QStringList()
+        m_Plugin->ImportPluginAuth(QStringList()
                                 <<"{b1db3ef5-17cf-413e-ab71-48b9a0b46820}"
                                 <<"{1d4397a2-dbcb-4ea5-a479-38d271d0962f}"
                                 <<"{b9e2fc0d-d67e-41b7-b1bc-6a224fc646c7}"
-                                <<"{e17639f9-ed6d-4e5c-9171-99eb732562ec}"
-                                );
-        m_Plugin->ImportCmdAuth(QStringList()
+                                <<"{e17639f9-ed6d-4e5c-9171-99eb732562ec}",
+                                QStringList()
                                 <<"{7398ae7c-1389-4758-a3d1-606ec002508a}"
                                 <<"{b783c1a2-715d-489a-b457-14677b7bd6a0}"
                                 <<"{c9a18fc4-a1a5-445e-9762-611f7131b0c2}"

@@ -13,7 +13,7 @@ void outputMessage(QtMsgType type, const QMessageLogContext &context, const QStr
     mutex.lock();
 
     QString text;
-    switch(type)
+    switch((int)type)
     {
     case QtDebugMsg:
         text = QString("Debug:");
