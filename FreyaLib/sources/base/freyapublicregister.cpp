@@ -183,7 +183,7 @@ bool FreyaPublicRegister::RemoveConfig(const QStringList &configPath)
     return false;
 }
 
-bool FreyaPublicRegister::RegisterObject(FreyaBaseAction *actObject, const QString &objectName)
+bool FreyaPublicRegister::RegisterObject(FreyaAbstractAction *actObject, const QString &objectName)
 {
     if(m_FreyaActObjectMap.contains(objectName) || NULL == actObject)
     {
@@ -204,17 +204,17 @@ bool FreyaPublicRegister::UnRegisterObject(const QString &objectName)
     return !m_FreyaActObjectMap.contains(objectName);
 }
 
-FreyaBaseAction *FreyaPublicRegister::GetObject(const QString &objectName)
+FreyaAbstractAction *FreyaPublicRegister::GetObject(const QString &objectName)
 {
     return m_FreyaActObjectMap.value(objectName, NULL);
 }
 
-QString FreyaPublicRegister::GetObjectName(FreyaBaseAction *actObject)
+QString FreyaPublicRegister::GetObjectName(FreyaAbstractAction *actObject)
 {
     return m_FreyaActObjectMap.key(actObject, "");
 }
 
-QMap<QString, FreyaBaseAction*> &FreyaPublicRegister::AllRegisterAction()
+QMap<QString, FreyaAbstractAction*> &FreyaPublicRegister::AllRegisterAction()
 {
     return m_FreyaActObjectMap;
 }

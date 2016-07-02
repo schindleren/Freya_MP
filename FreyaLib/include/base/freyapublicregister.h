@@ -20,7 +20,7 @@ enum ConfModType{
 };
 
 class FreyaBaseJson;
-class FreyaBaseAction;
+class FreyaAbstractAction;
 struct FreyaBaseData
 {
     QString     dataID;
@@ -62,12 +62,12 @@ public:
     bool InsertConfig(const QStringList &configPath, const QVariant &var);
     bool RemoveConfig(const QStringList &configPath);
 
-    bool RegisterObject(FreyaBaseAction *actObject, const QString &objectName);
+    bool RegisterObject(FreyaAbstractAction *actObject, const QString &objectName);
     bool UnRegisterObject(const QString &objectName);
-    FreyaBaseAction *GetObject(const QString &objectName);
-    QString GetObjectName(FreyaBaseAction *actObject);
+    FreyaAbstractAction *GetObject(const QString &objectName);
+    QString GetObjectName(FreyaAbstractAction *actObject);
 
-    QMap<QString, FreyaBaseAction*> &AllRegisterAction();
+    QMap<QString, FreyaAbstractAction*> &AllRegisterAction();
 
 private:
     bool ConfigModifyRecursion(QVariantMap &varMap, const QStringList &configPath, const ConfModType &type, const QVariant &var = QVariant());
@@ -75,7 +75,7 @@ private:
 private:
     QMap<QString, FreyaBaseData*>       m_FreyaDataMap;
     QPair<QString, QVariantMap>         m_FreyaConfigPair;
-    QMap<QString, FreyaBaseAction*>     m_FreyaActObjectMap;
+    QMap<QString, FreyaAbstractAction*> m_FreyaActObjectMap;
     QMap<quint64, QString>              m_FreyaCmdMap;
 };
 

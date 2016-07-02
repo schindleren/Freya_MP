@@ -14,7 +14,7 @@
 
 struct FreyaBaseData;
 class FreyaPublicRegister;
-class FreyaBaseAction;
+class FreyaAbstractAction;
 class FREYALIBSHARED_EXPORT FreyaBaseControl : public FreyaAbstractControl
 {
 private:
@@ -31,12 +31,12 @@ public:
     bool InsertConfig(const QStringList &configPath, const QVariant &var);
     bool RemoveConfig(const QStringList &configPath);
 
-    bool RegisterObject(FreyaBaseAction *actObject, const char *objectName);
+    bool RegisterObject(FreyaAbstractAction *actObject, const char *objectName);
     bool UnRegisterObject(const QString &objectName);
-    bool UnRegisterObject(FreyaBaseAction *actObject);
-    FreyaBaseAction *GetActionObject(const QString &objectName);
-    QString GetActionObjectName(FreyaBaseAction *actObject);
-    void DeleteAllAction(const QList<FreyaBaseAction*> &except = QList<FreyaBaseAction*>());
+    bool UnRegisterObject(FreyaAbstractAction *actObject);
+    FreyaAbstractAction *GetActionObject(const QString &objectName);
+    QString GetActionObjectName(FreyaAbstractAction *actObject);
+    void DeleteAllAction(const QList<FreyaAbstractAction*> &except = QList<FreyaAbstractAction*>());
     void DeleteAllAction(const QStringList &except);
 
     bool InsertBaseData(FreyaBaseData *pData);

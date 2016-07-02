@@ -7,6 +7,7 @@ FreyaBaseControl::FreyaBaseControl() :
     FreyaAbstractControl(),m_FreyaPublicRegister(NULL)
 {
     m_FreyaPublicRegister = new FreyaPublicRegister();
+    qRegisterMetaType<FreyaBaseData>("FreyaBaseData");
 }
 
 FreyaBaseControl::~FreyaBaseControl()
@@ -53,7 +54,7 @@ bool FreyaBaseControl::RemoveConfig(const QStringList &configPath)
     return m_FreyaPublicRegister->RemoveConfig(configPath);
 }
 
-bool FreyaBaseControl::RegisterObject(FreyaBaseAction *actObject, const char *objectName)
+bool FreyaBaseControl::RegisterObject(FreyaAbstractAction *actObject, const char *objectName)
 {
     return m_FreyaPublicRegister->RegisterObject(actObject, objectName);
 }
@@ -63,25 +64,25 @@ bool FreyaBaseControl::UnRegisterObject(const QString &objectName)
     return m_FreyaPublicRegister->UnRegisterObject(objectName);
 }
 
-bool FreyaBaseControl::UnRegisterObject(FreyaBaseAction *actObject)
+bool FreyaBaseControl::UnRegisterObject(FreyaAbstractAction *actObject)
 {
     return m_FreyaPublicRegister->UnRegisterObject(GetActionObjectName(actObject));
 }
 
-FreyaBaseAction *FreyaBaseControl::GetActionObject(const QString &objectName)
+FreyaAbstractAction *FreyaBaseControl::GetActionObject(const QString &objectName)
 {
     return m_FreyaPublicRegister->GetObject(objectName);
 }
 
-QString FreyaBaseControl::GetActionObjectName(FreyaBaseAction *actObject)
+QString FreyaBaseControl::GetActionObjectName(FreyaAbstractAction *actObject)
 {
     return m_FreyaPublicRegister->GetObjectName(actObject);
 }
 
-void FreyaBaseControl::DeleteAllAction(const QList<FreyaBaseAction *> &except)
+void FreyaBaseControl::DeleteAllAction(const QList<FreyaAbstractAction *> &except)
 {
-    QList<FreyaBaseAction *> ActionList = m_FreyaPublicRegister->AllRegisterAction().values();
-    foreach (FreyaBaseAction *pAction, ActionList)
+    QList<FreyaAbstractAction *> ActionList = m_FreyaPublicRegister->AllRegisterAction().values();
+    foreach (FreyaAbstractAction *pAction, ActionList)
     {
         if(!except.contains(pAction))
         {
@@ -92,7 +93,7 @@ void FreyaBaseControl::DeleteAllAction(const QList<FreyaBaseAction *> &except)
 
 void FreyaBaseControl::DeleteAllAction(const QStringList &except)
 {
-    QList<FreyaBaseAction *> ActionList;
+    QList<FreyaAbstractAction *> ActionList;
     foreach (const QString &ActionName, except)
     {
         ActionList.append(m_FreyaPublicRegister->GetObject(ActionName));
@@ -124,7 +125,7 @@ bool FreyaBaseControl::RequestExecution(void *pRequester)
     foreach (const QString &ActionName, ActionNames)
     {
         r = true;
-        FreyaBaseAction *pAction = m_FreyaPublicRegister->AllRegisterAction().value(ActionName, NULL);
+        FreyaAbstractAction *pAction = m_FreyaPublicRegister->AllRegisterAction().value(ActionName, NULL);
         if(pAction)
         {
             pAction->Execute();
@@ -146,7 +147,7 @@ bool FreyaBaseControl::RequestExecution(const quint64 &command, void *pRequester
     foreach (const QString &ActionName, ActionNames)
     {
         r = true;
-        FreyaBaseAction *pAction = m_FreyaPublicRegister->AllRegisterAction().value(ActionName, NULL);
+        FreyaAbstractAction *pAction = m_FreyaPublicRegister->AllRegisterAction().value(ActionName, NULL);
         if(pAction)
         {
             pAction->Execute(command);
@@ -168,7 +169,7 @@ bool FreyaBaseControl::RequestExecution(FreyaBaseData *pBaseData, void *pRequest
     foreach (const QString &ActionName, ActionNames)
     {
         r = true;
-        FreyaBaseAction *pAction = m_FreyaPublicRegister->AllRegisterAction().value(ActionName, NULL);
+        FreyaAbstractAction *pAction = m_FreyaPublicRegister->AllRegisterAction().value(ActionName, NULL);
         if(pAction)
         {
             pAction->Execute(pBaseData);
