@@ -18,12 +18,12 @@ protected:
     void Execute(FreyaBaseData *pData);
 
 protected slots:
-    virtual void OnExecuteEx(const quint64 &command) = 0;
-    virtual void OnExecuteEx(FreyaBaseData *pData) = 0;
+    virtual void OnExecuteEx(const quint64 &command);
+    virtual void OnExecuteEx(const QString &DataId);
 
 signals:
     void ToExecute(const quint64 &command);
-    void ToExecute(FreyaBaseData *pData);
+    void ToExecute(const QString &DataId);
 
 protected:
     FreyaBaseControl *m_FreyaBaseControl;
