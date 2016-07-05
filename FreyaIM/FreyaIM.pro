@@ -73,7 +73,7 @@ TRANSLATIONS += $$PWD/resource/freyaimtrans.ts
 RC_FILE += $$PWD/resource/freyaimicon.rc
 
 LIBS += $$PWD/../bin/lib$${QXMPP_LIBRARY_NAME}0.a
-LIBS += $$PWD/../bin/lib$${FREYALIB_NAME}1.a
+LIBS += $$PWD/../bin/lib$${FREYALIB_NAME}2.a
 
 RESOURCES += \
     freyaimrc.qrc
