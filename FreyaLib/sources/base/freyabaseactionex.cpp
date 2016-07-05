@@ -19,20 +19,20 @@ FreyaBaseActionEx::~FreyaBaseActionEx()
 
 void FreyaBaseActionEx::Execute(const quint64 &command)
 {
-    qDebug()<<"ActionEx_Execute:" << hex << command;
     emit ToExecute(command);
 }
 
 void FreyaBaseActionEx::Execute(FreyaBaseData *pData)
 {
-    qDebug()<<"ActionEx_Execute:" << pData->dataID << hex << pData->command << pData->arguments;
     emit ToExecute(pData->dataID);
 }
 
-void FreyaBaseActionEx::OnExecuteEx(const quint64 &/*command*/)
+void FreyaBaseActionEx::OnExecuteEx(const quint64 &command)
 {
+    qDebug()<<"ActionEx_Execute:" << hex << command;
 }
 
-void FreyaBaseActionEx::OnExecuteEx(const QString &/*DataId*/)
+void FreyaBaseActionEx::OnExecuteEx(const QString &DataId)
 {
+    qDebug()<<"ActionEx_Execute:" << DataId;
 }
