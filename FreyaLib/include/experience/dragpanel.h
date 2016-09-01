@@ -14,6 +14,7 @@
  007     Ren Dan       2014-01-01   Fixed maxed size move event
  008     Ren Dan       2015-04-28   Change base class to QDialog
  009     Ren Dan       2015-05-12   Remove SetPanelMinSize and OnShowMiniSize
+ 010     Ren Dan       2016-09-01   Fix the problem in terms of the coordinates of the non-window
 *******************************************************************************/
 
 #ifndef DRAGPANEL_H

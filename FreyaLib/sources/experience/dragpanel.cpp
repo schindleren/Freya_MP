@@ -14,6 +14,7 @@
  007     Ren Dan       2014-01-01   Fixed maxed size move event
  008     Ren Dan       2015-04-28   Change base class to QDialog
  009     Ren Dan       2015-05-12   Remove SetPanelMinSize and OnShowMiniSize
+ 010     Ren Dan       2016-09-01   Fix the problem in terms of the coordinates of the non-window
 *******************************************************************************/
 
 #include "dragpanel.h"
@@ -128,7 +129,8 @@ void DragPanel::mousePressEvent(QMouseEvent *e)
 {
     if (!m_isMaxSize && e->button() == m_mButton)
     {
-        m_DragPosition = e->globalPos() - frameGeometry().topLeft();
+        QPoint GreaterPos(mapToParent(e->pos()));
+        m_DragPosition = GreaterPos - frameGeometry().topLeft();
         m_RBPoint = frameGeometry().bottomRight();
         m_isPressed = true;
         e->accept();
@@ -217,17 +219,18 @@ void DragPanel::mouseMoveEvent(QMouseEvent *e)
     //On Resize & Move
     else if(e->buttons() & m_mButton)
     {
+        QPoint GreaterPos(mapToParent(e->pos()));
         //Drag Left Top pos
         if(m_ResizeStyle == ResizeLT)
         {
-            QSize rSize = QSize(m_RBPoint.x() - e->globalPos().x(), m_RBPoint.y() - e->globalPos().y());
+            QSize rSize = QSize(m_RBPoint.x() - GreaterPos.x(), m_RBPoint.y() - GreaterPos.y());
             if(rSize.width() < minimumWidth())
             {
                 rSize.setWidth(minimumWidth());
             }
             else
             {
-                move(e->globalPos().x(), y());
+                move(GreaterPos.x(), y());
             }
             if(rSize.height() < minimumHeight())
             {
@@ -235,14 +238,14 @@ void DragPanel::mouseMoveEvent(QMouseEvent *e)
             }
             else
             {
-                move(x(), e->globalPos().y());
+                move(x(), GreaterPos.y());
             }
             resize(rSize);
         }
         //Drag Right Top pos
         else if(m_ResizeStyle == ResizeRT)
         {
-            QSize rSize = QSize(e->globalPos().x() - frameGeometry().left(), m_RBPoint.y() - e->globalPos().y());
+            QSize rSize = QSize(GreaterPos.x() - frameGeometry().left(), m_RBPoint.y() - GreaterPos.y());
             if(rSize.width() < minimumWidth())
             {
                 rSize.setWidth(minimumWidth());
@@ -253,21 +256,21 @@ void DragPanel::mouseMoveEvent(QMouseEvent *e)
             }
             else
             {
-                move(x(), e->globalPos().y());
+                move(x(), GreaterPos.y());
             }
             resize(rSize);
         }
         //Drag Left Bottom pos
         else if(m_ResizeStyle == ResizeLB)
         {
-            QSize rSize = QSize(m_RBPoint.x() - e->globalPos().x(), e->globalPos().y() - frameGeometry().top());
+            QSize rSize = QSize(m_RBPoint.x() - GreaterPos.x(), GreaterPos.y() - frameGeometry().top());
             if(rSize.width() < minimumWidth())
             {
                 rSize.setWidth(minimumWidth());
             }
             else
             {
-                move(e->globalPos().x(), y());
+                move(GreaterPos.x(), y());
             }
             if(rSize.height() < minimumHeight())
             {
@@ -278,7 +281,7 @@ void DragPanel::mouseMoveEvent(QMouseEvent *e)
         //Drag Right Bottom pos
         else if(m_ResizeStyle == ResizeRB)
         {
-            QSize rSize = QSize(e->globalPos().x() - frameGeometry().left(), e->globalPos().y() - frameGeometry().top());
+            QSize rSize = QSize(GreaterPos.x() - frameGeometry().left(), GreaterPos.y() - frameGeometry().top());
             if(rSize.width() < minimumWidth())
             {
                 rSize.setWidth(minimumWidth());
@@ -292,35 +295,35 @@ void DragPanel::mouseMoveEvent(QMouseEvent *e)
         //Drag Left line
         else if(m_ResizeStyle == ResizeLeft)
         {
-            QSize rSize = QSize(m_RBPoint.x() - e->globalPos().x(), height());
+            QSize rSize = QSize(m_RBPoint.x() - GreaterPos.x(), height());
             if(rSize.width() < minimumWidth())
             {
                 rSize.setWidth(minimumWidth());
             }
             else
             {
-                move(e->globalPos().x(), y());
+                move(GreaterPos.x(), y());
             }
             resize(rSize);
         }
         //Drag Top line
         else if(m_ResizeStyle == ResizeTop)
         {
-            QSize rSize = QSize(width(), m_RBPoint.y() - e->globalPos().y());
+            QSize rSize = QSize(width(), m_RBPoint.y() - GreaterPos.y());
             if(rSize.height() < minimumHeight())
             {
                 rSize.setHeight(minimumHeight());
             }
             else
             {
-                move(x(), e->globalPos().y());
+                move(x(), GreaterPos.y());
             }
             resize(rSize);
         }
         //Drag Right line
         else if(m_ResizeStyle == ResizeRight)
         {
-            QSize rSize = QSize(e->globalPos().x() - frameGeometry().left(), height());
+            QSize rSize = QSize(GreaterPos.x() - frameGeometry().left(), height());
             if(rSize.width() < minimumWidth())
             {
                 rSize.setWidth(minimumWidth());
@@ -330,7 +333,7 @@ void DragPanel::mouseMoveEvent(QMouseEvent *e)
         //Drag Bottom line
         else if(m_ResizeStyle == ResizeBottom)
         {
-            QSize rSize = QSize(width(), e->globalPos().y() - frameGeometry().top());
+            QSize rSize = QSize(width(), GreaterPos.y() - frameGeometry().top());
             if(rSize.height() < minimumHeight())
             {
                 rSize.setHeight(minimumHeight());
@@ -340,7 +343,7 @@ void DragPanel::mouseMoveEvent(QMouseEvent *e)
         //Move
         else if(m_isPressed)
         {
-            move(e->globalPos() - m_DragPosition);
+            move(GreaterPos - m_DragPosition);
         }
         e->ignore();
     }
