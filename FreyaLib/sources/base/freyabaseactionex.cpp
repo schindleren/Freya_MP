@@ -5,16 +5,16 @@ FreyaBaseActionEx::FreyaBaseActionEx(FreyaBaseControl *pControl, const char *obj
 {
     connect(this, SIGNAL(ToExecute(quint64)), SLOT(OnExecuteEx(quint64)), Qt::QueuedConnection);
     connect(this, SIGNAL(ToExecute(QString)), SLOT(OnExecuteEx(QString)), Qt::QueuedConnection);
-    m_thread = new QThread;
-    moveToThread(m_thread);
-    m_thread->start();
+    m_FreyaBAExThread = new QThread;
+    moveToThread(m_FreyaBAExThread);
+    m_FreyaBAExThread->start();
 }
 
 FreyaBaseActionEx::~FreyaBaseActionEx()
 {
     qDebug()<<"Temp=>"<<this<<"terminate";
-    m_thread->terminate();
-    delete m_thread;
+    m_FreyaBAExThread->terminate();
+    delete m_FreyaBAExThread;
 }
 
 void FreyaBaseActionEx::Execute(const quint64 &command)

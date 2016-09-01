@@ -26,10 +26,8 @@ signals:
     void ToExecute(const QString &DataId);
 
 protected:
-    FreyaBaseControl *m_FreyaBaseControl;
-
-private:
-    QThread             *m_thread;
+    FreyaBaseControl    *m_FreyaBaseControl;
+    QThread             *m_FreyaBAExThread;
 };
 
 #endif // FREYABASEACTIONEX_H

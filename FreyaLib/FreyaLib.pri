@@ -1,5 +1,5 @@
 
-QT       += core gui widgets network sql svg webkit webkitwidgets multimedia
+QT       += core gui widgets network
 
 CONFIG(debug, debug|release) {
     FREYALIB_NAME = FreyaLib_d

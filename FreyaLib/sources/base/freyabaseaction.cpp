@@ -5,7 +5,7 @@ FreyaBaseAction::FreyaBaseAction(FreyaBaseControl *pControl, const char *objectN
 {
     if(NULL != objectName)
     {
-        if(NULL != m_FreyaBaseControl /*&& NULL != m_FreyaBaseControl->parent()*/ && NULL != this)
+        if(NULL != m_FreyaBaseControl /*&& NULL != m_FreyaBaseControl->parent()*/)
         {
             m_FreyaBaseControl->RegisterObject(this, objectName);
         }
@@ -14,7 +14,7 @@ FreyaBaseAction::FreyaBaseAction(FreyaBaseControl *pControl, const char *objectN
 
 FreyaBaseAction::~FreyaBaseAction()
 {
-    if(NULL != m_FreyaBaseControl /*&& NULL != m_FreyaBaseControl->parent()*/ && NULL != this)
+    if(NULL != m_FreyaBaseControl /*&& NULL != m_FreyaBaseControl->parent()*/)
     {
         m_FreyaBaseControl->UnRegisterObject(this);
     }
