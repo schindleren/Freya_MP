@@ -3,42 +3,26 @@
  Summary          : Less frame window with base funcation
  Create           : 2012-08-24
  Author           : RenDan
- Update history   :
- NO.     Author        Date         Content
- 001     Ren Dan       2012-08-24   Create New
- 002     Ren Dan       2012-12-05   Add resize right&bottom funcation
- 003     Ren Dan       2013-04-23   Delete constructor Enable resize parameter
- 004     Ren Dan       2013-04-23   Add full resize funcation
- 005     Ren Dan       2013-10-25   Add Press widget judge
- 006     Ren Dan       2013-11-18   Fixed double click to show maxed or show normal
- 007     Ren Dan       2014-01-01   Fixed maxed size move event
- 008     Ren Dan       2015-04-28   Change base class to QDialog
- 009     Ren Dan       2015-05-12   Remove SetPanelMinSize and OnShowMiniSize
- 010     Ren Dan       2016-09-01   Fix the problem in terms of the coordinates of the non-window
+ Update history   : (Look up at dragpanel.h)
 *******************************************************************************/
 
 #include "dragpanel.h"
 
 DragPanel::DragPanel(QWidget *parent, Qt::MouseButton mButton) :
-    QDialog(parent)
+    QWidget(parent)
 {
     m_mButton = mButton;
     m_isPressed = false;
     m_FrameWidth = 10;
     m_isMaxSize = false;
     m_isMaxAble = true;
+    m_ShadowWidth = 0;
+    m_ShadowColor = Qt::black;
+    m_ShadowAlpha = 100;
 
     setMouseTracking(true);
 }
 
-/***************************************************
-  Author: RenDan
-  Date: 2013-04-23
-  Description: Set the panel resize frame width
-  Input: int
-  Output: void
-  Return: void
-****************************************************/
 void DragPanel::SetResizeFrameWidth(const int &frameWidth)
 {
     m_FrameWidth = frameWidth;
@@ -49,40 +33,23 @@ void DragPanel::SetResizeFrameWidth(const int &frameWidth)
     }
 }
 
-/***************************************************
-  Author: RenDan
-  Date: 2013-11-12
-  Description: Set the show maxsize enable or not
-  Input: bool
-  Output: void
-  Return: void
-****************************************************/
 void DragPanel::SetShowMaxAble(const bool &isEnable)
 {
     m_isMaxAble = isEnable;
 }
 
-/***************************************************
-  Author: RenDan
-  Date: 2013-04-23
-  Description: Set the panel object name
-  Input: QString
-  Output: void
-  Return: void
-****************************************************/
 void DragPanel::SetObjectName(const QString &name)
 {
     setObjectName(name);
 }
 
-/***************************************************
-  Author: RenDan
-  Date: 2013-04-23
-  Description: Set the panel Show max size
-  Input: void
-  Output: void
-  Return: void
-****************************************************/
+void DragPanel::SetShadowStyle(int width, QColor color, int alpha)
+{
+    m_ShadowWidth = width;
+    m_ShadowColor = color;
+    m_ShadowAlpha = alpha;
+}
+
 void DragPanel::OnShowMaximized()
 {
     if(m_isMaxAble)
@@ -102,14 +69,6 @@ void DragPanel::OnShowMaximized()
     }
 }
 
-/***************************************************
-  Author: RenDan
-  Date: 2013-04-23
-  Description: Set the panel Show normal size
-  Input: void
-  Output: void
-  Return: void
-****************************************************/
 void DragPanel::OnShowNormal()
 {
     m_isMaxSize = false;
@@ -117,14 +76,6 @@ void DragPanel::OnShowNormal()
     ToShowMaximized(m_isMaxSize);
 }
 
-/***************************************************
-  Author: RenDan
-  Date: 2012-08-24
-  Description: Mouse Press Event
-  Input: QMouseEvent*
-  Output: void
-  Return: void
-****************************************************/
 void DragPanel::mousePressEvent(QMouseEvent *e)
 {
     if (!m_isMaxSize && e->button() == m_mButton)
@@ -141,16 +92,6 @@ void DragPanel::mousePressEvent(QMouseEvent *e)
     }
 }
 
-/***************************************************
-  Author: RenDan
-  Date: 2012-08-24
-  Modify: 2012-12-05
-  Modify: 2013-04-23
-  Description: Mouse Move Event
-  Input: QMouseEvent*
-  Output: void
-  Return: void
-****************************************************/
 void DragPanel::mouseMoveEvent(QMouseEvent *e)
 {
     if(m_isMaxSize)
@@ -353,14 +294,6 @@ void DragPanel::mouseMoveEvent(QMouseEvent *e)
     }
 }
 
-/***************************************************
-  Author: RenDan
-  Date: 2012-08-24
-  Description: Mouse Release Event
-  Input: QMouseEvent*
-  Output: void
-  Return: void
-****************************************************/
 void DragPanel::mouseReleaseEvent(QMouseEvent *e)
 {
     m_ResizeStyle = NotResizing ;
@@ -376,14 +309,6 @@ void DragPanel::mouseReleaseEvent(QMouseEvent *e)
     }
 }
 
-/***************************************************
-  Author: RenDan
-  Date: 2013-04-23
-  Description: Mouse DoubleClick Event
-  Input: QMouseEvent*
-  Output: void
-  Return: void
-****************************************************/
 void DragPanel::mouseDoubleClickEvent(QMouseEvent *e)
 {
     if(e->button() == m_mButton)
@@ -406,15 +331,31 @@ void DragPanel::mouseDoubleClickEvent(QMouseEvent *e)
     }
 }
 
-/***************************************************
-  Author: RenDan
-  Date: 2013-04-26
-  Description: When window show repaint it
-  Input: QShowEvent*
-  Output: void
-  Return: void
-****************************************************/
 void DragPanel::showEvent(QShowEvent *)
 {
     repaint();
+}
+
+void DragPanel::paintEvent(QPaintEvent *)
+{
+    if(m_ShadowWidth > 0)
+    {
+        QPainterPath path;
+        path.setFillRule(Qt::WindingFill);
+        path.addRect(m_ShadowWidth, m_ShadowWidth, width() - m_ShadowWidth * 2, height() - m_ShadowWidth * 2);
+        QPainter painter(this);
+        painter.setRenderHint(QPainter::Antialiasing, true);
+        painter.fillPath(path, QBrush(Qt::white));
+
+        for(int i = 0; i < m_ShadowWidth; i++)
+        {
+            QPainterPath path;
+            path.setFillRule(Qt::WindingFill);
+            path.addRect(m_ShadowWidth - i, m_ShadowWidth - i, width() - (m_ShadowWidth - i) * 2, height() - (m_ShadowWidth - i) * 2);
+            qreal alp = m_ShadowAlpha * qLn(m_ShadowWidth) - m_ShadowAlpha * qLn(1 + i);
+            m_ShadowColor.setAlpha(alp > 0 ? (alp > 255 ? 255 : alp) : 0);
+            painter.setPen(m_ShadowColor);
+            painter.drawPath(path);
+        }
+    }
 }
