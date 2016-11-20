@@ -18,7 +18,7 @@ DragPanel::DragPanel(QWidget *parent, Qt::MouseButton mButton) :
     m_isMaxAble = true;
     m_ShadowWidth = 0;
     m_ShadowColor = Qt::black;
-    m_ShadowAlpha = 100;
+    m_ShadowAlpha = 50;
 
     setMouseTracking(true);
 }

@@ -74,7 +74,7 @@ public:
       Output: void
       Return: void
     ****************************************************/
-    void SetShadowStyle(int width = 5, QColor color = Qt::black, int alpha = 100);
+    void SetShadowStyle(int width = 5, QColor color = Qt::black, int alpha = 50);
 
 protected:
 
