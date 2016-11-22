@@ -7,21 +7,23 @@
  NO.     Author        Date         Content
  001     Ren Dan       2012-08-24   Create New
  002     Ren Dan       2012-12-05   Add resize right&bottom funcation
- 003     Ren Dan       2013-04-23   Delete constructor Enable resize parameter
+ 003     Ren Dan       2013-04-23   Delete constructor enable resize parameter
  004     Ren Dan       2013-04-23   Add full resize funcation
- 005     Ren Dan       2013-10-25   Add Press widget judge
+ 005     Ren Dan       2013-10-25   Add press widget judge
  006     Ren Dan       2013-11-18   Fixed double click to show maxed or show normal
  007     Ren Dan       2014-01-01   Fixed maxed size move event
  008     Ren Dan       2015-04-28   Change base class to QDialog
- 009     Ren Dan       2015-05-12   Remove SetPanelMinSize and OnShowMiniSize
+ 009     Ren Dan       2015-05-12   Remove SetPanelMinSize() and OnShowMiniSize()
  010     Ren Dan       2016-09-01   Fix the problem in terms of the coordinates of the non-window
- 011     Ren Dan       2016-11-20   Add window shadow
+ 011     Ren Dan       2016-11-20   Add window SHADOW
+ 012     Ren Dan       2016-11-22   Fix due to the gap caused by SHADOW when show maximized And take over Margin of Boxlayout
 *******************************************************************************/
 
 #ifndef DRAGPANEL_H
 #define DRAGPANEL_H
 
 #include <QDialog>
+#include <QBoxLayout>
 #include <QDesktopWidget>
 #include <QMouseEvent>
 #include <QPainter>

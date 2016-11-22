@@ -340,22 +340,33 @@ void DragPanel::paintEvent(QPaintEvent *)
 {
     if(m_ShadowWidth > 0)
     {
+        int iShadowW = m_ShadowWidth;
+        if(isShowMaximized())
+        {
+            iShadowW = 0;
+        }
         QPainterPath path;
         path.setFillRule(Qt::WindingFill);
-        path.addRect(m_ShadowWidth, m_ShadowWidth, width() - m_ShadowWidth * 2, height() - m_ShadowWidth * 2);
+        path.addRect(iShadowW, iShadowW, width() - iShadowW * 2, height() - iShadowW * 2);
         QPainter painter(this);
         painter.setRenderHint(QPainter::Antialiasing, true);
-        painter.fillPath(path, QBrush(Qt::white));
+        painter.fillPath(path, palette().background());
 
-        for(int i = 0; i < m_ShadowWidth; i++)
+        for(int i = 0; i < iShadowW; i++)
         {
             QPainterPath path;
             path.setFillRule(Qt::WindingFill);
-            path.addRect(m_ShadowWidth - i, m_ShadowWidth - i, width() - (m_ShadowWidth - i) * 2, height() - (m_ShadowWidth - i) * 2);
-            qreal alp = m_ShadowAlpha * qLn(m_ShadowWidth) - m_ShadowAlpha * qLn(1 + i);
+            path.addRect(iShadowW - i, iShadowW - i, width() - (iShadowW - i) * 2, height() - (iShadowW - i) * 2);
+            qreal alp = m_ShadowAlpha * qLn(iShadowW) - m_ShadowAlpha * qLn(1 + i);
             m_ShadowColor.setAlpha(alp > 0 ? (alp > 255 ? 255 : alp) : 0);
             painter.setPen(m_ShadowColor);
             painter.drawPath(path);
+        }
+
+        QBoxLayout *bLay = qobject_cast<QBoxLayout*>(layout());
+        if(bLay)
+        {
+            bLay->setMargin(iShadowW);
         }
     }
 }
