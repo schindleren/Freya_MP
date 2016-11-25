@@ -17,6 +17,7 @@
  010     Ren Dan       2016-09-01   Fix the problem in terms of the coordinates of the non-window
  011     Ren Dan       2016-11-20   Add window SHADOW
  012     Ren Dan       2016-11-22   Fix due to the gap caused by SHADOW when show maximized And take over Margin of Boxlayout
+ 013     Ren Dan       2016-11-25   Fix the unnatural transition on the corner of SHADOW
 *******************************************************************************/
 
 #ifndef DRAGPANEL_H

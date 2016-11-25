@@ -356,7 +356,7 @@ void DragPanel::paintEvent(QPaintEvent *)
         {
             QPainterPath path;
             path.setFillRule(Qt::WindingFill);
-            path.addRect(iShadowW - i, iShadowW - i, width() - (iShadowW - i) * 2, height() - (iShadowW - i) * 2);
+            path.addRoundedRect(iShadowW - i, iShadowW - i, width() - (iShadowW - i) * 2, height() - (iShadowW - i) * 2, i, i);
             qreal alp = m_ShadowAlpha * qLn(iShadowW) - m_ShadowAlpha * qLn(1 + i);
             m_ShadowColor.setAlpha(alp > 0 ? (alp > 255 ? 255 : alp) : 0);
             painter.setPen(m_ShadowColor);
