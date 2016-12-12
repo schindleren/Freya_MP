@@ -23,6 +23,7 @@
 #ifndef DRAGPANEL_H
 #define DRAGPANEL_H
 
+#include "freyalib_global.h"
 #include <QDialog>
 #include <QBoxLayout>
 #include <QDesktopWidget>
@@ -30,7 +31,7 @@
 #include <QPainter>
 #include <QtMath>
 
-class DragPanel : public QWidget
+class FREYALIBSHARED_EXPORT DragPanel : public QWidget
 {
     Q_OBJECT
 
