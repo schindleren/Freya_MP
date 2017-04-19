@@ -13,7 +13,7 @@ TEMPLATE = lib
 
 VERSION = 2.0.0.0
 DEFINES += FREYAVER=\\\"2.1.0.4\\\"
-QMAKE_TARGET_COMPANY = "SchindlerenDesign
+QMAKE_TARGET_COMPANY = "SchindlerenDesign"
 QMAKE_TARGET_PRODUCT = FreyaLib
 QMAKE_TARGET_DESCRIPTION = C++ application development framework.
 QMAKE_TARGET_COPYRIGHT = Copyright (C) SchindlerenDesign
