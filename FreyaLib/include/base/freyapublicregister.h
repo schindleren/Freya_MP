@@ -39,6 +39,10 @@ struct FreyaBaseData
         command = other.command;
         arguments = other.arguments;
     }
+    ~FreyaBaseData()
+    {
+        qDebug()<<"FreyaLib > "<<"delete freya data. ID: "<<dataID;
+    }
     static QByteArray Serialize(const FreyaBaseData & data);
 
     static FreyaBaseData Unserialize(const QByteArray & ba);
