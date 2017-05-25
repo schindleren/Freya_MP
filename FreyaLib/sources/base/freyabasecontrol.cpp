@@ -16,7 +16,7 @@ FreyaBaseControl::~FreyaBaseControl()
     {
         delete m_FreyaPublicRegister;
     }
-    qDebug()<<"Destructor"<<this;
+    qDebug()<<"FreyaLib > "<<"Destructor"<<this;
 }
 
 bool FreyaBaseControl::CheckFreyaLibConfig(const QString &filePath, const QString &configKey)
@@ -118,7 +118,7 @@ FreyaBaseData *FreyaBaseControl::TakeBaseData(const QString &dataID)
 
 bool FreyaBaseControl::RequestExecution(void *pRequester)
 {
-    qDebug()<<"Execution:"<<"without arguments"<<"From:"<<pRequester;
+    qDebug()<<"FreyaLib > "<<"Execution:"<<"without arguments"<<"From:"<<pRequester;
     bool r = false;
     QStringList ActionNames = m_FreyaPublicRegister->AllRegisterAction().keys();
     m_RequesterVec.push_back(pRequester);
@@ -140,7 +140,7 @@ bool FreyaBaseControl::RequestExecution(void *pRequester)
 
 bool FreyaBaseControl::RequestExecution(const quint64 &command, void *pRequester)
 {
-    qDebug()<<"Execution:"<<"Command:"<<hex<<command<<dec<<"From:"<<pRequester;
+    qDebug()<<"FreyaLib > "<<"Execution:"<<"Command:"<<hex<<command<<dec<<"From:"<<pRequester;
     bool r = false;
     QStringList ActionNames = m_FreyaPublicRegister->AllRegisterAction().keys();
     m_RequesterVec.push_back(pRequester);
@@ -160,9 +160,9 @@ bool FreyaBaseControl::RequestExecution(const quint64 &command, void *pRequester
     return r;
 }
 
-bool FreyaBaseControl::RequestExecution(FreyaBaseData *pBaseData, void *pRequester)
+bool FreyaBaseControl::RequestExecution(const FreyaBaseData &BaseData, void *pRequester)
 {
-    qDebug()<<"Execution:"<<"DataID:"<<pBaseData->dataID<<"Command:"<<hex<<pBaseData->command<<dec<<"Arguments:"<<pBaseData->arguments<<"From:"<<pRequester;
+    qDebug()<<"FreyaLib > "<<"Execution:"<<"DataID:"<<BaseData.dataID<<"Command:"<<hex<<BaseData.command<<dec<<"Arguments:"<<BaseData.arguments<<"From:"<<pRequester;
     bool r = false;
     QStringList ActionNames = m_FreyaPublicRegister->AllRegisterAction().keys();
     m_RequesterVec.push_back(pRequester);
@@ -172,7 +172,7 @@ bool FreyaBaseControl::RequestExecution(FreyaBaseData *pBaseData, void *pRequest
         FreyaAbstractAction *pAction = m_FreyaPublicRegister->AllRegisterAction().value(ActionName, NULL);
         if(pAction)
         {
-            pAction->Execute(pBaseData);
+            pAction->Execute(BaseData);
         }
     }
     if(m_RequesterVec.size() > 0)

@@ -5,6 +5,7 @@
 #include "freyabasecontrol.h"
 #include "freyabaseaction.h"
 #include <QThread>
+#include <QSharedPointer>
 
 class FREYALIBSHARED_EXPORT FreyaBaseActionEx : public QObject, public FreyaBaseAction
 {
@@ -13,17 +14,17 @@ public:
     explicit FreyaBaseActionEx(FreyaBaseControl *pControl = NULL, const char *objectName = NULL);
     virtual ~FreyaBaseActionEx();
 
-protected:
+private:
     void Execute(const quint64 &command);
-    void Execute(FreyaBaseData *pData);
+    void Execute(const FreyaBaseData &data);
 
 protected slots:
     virtual void OnExecuteEx(const quint64 &command);
-    virtual void OnExecuteEx(const QString &DataId);
+    virtual void OnExecuteEx(QSharedPointer<FreyaBaseData> data);
 
 signals:
     void ToExecute(const quint64 &command);
-    void ToExecute(const QString &DataId);
+    void ToExecute(QSharedPointer<FreyaBaseData> pData);
 
 protected:
     FreyaBaseControl    *m_FreyaBaseControl;

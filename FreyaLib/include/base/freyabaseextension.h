@@ -22,7 +22,7 @@ public:
     explicit FreyaPluginPusher(QString PluginID, FreyaBaseControl *pControl = NULL, QObject *parent = 0);
 
     void PusherExcute(const quint64 &command);
-    void PusherExcute(FreyaBaseData *pData);
+    void PusherExcute(const FreyaBaseData &data);
 
 protected:
     virtual void run();
@@ -53,13 +53,13 @@ public:
 
 protected:
     virtual void Execute(const quint64 &command);
-    virtual void Execute(FreyaBaseData *pData);
+    virtual void Execute(const FreyaBaseData &data);
 
 private slots:
     void OnPluginRequest();
     void OnReadyRead();
     void OnPusherDisconnected();
-    void OnPuserRequest(FreyaBaseData pData);
+    void OnPuserRequest(FreyaBaseData data);
 
 private:
     QList<FreyaPluginPusher*>           m_PusherList;

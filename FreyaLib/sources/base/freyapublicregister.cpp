@@ -191,7 +191,7 @@ bool FreyaPublicRegister::RegisterObject(FreyaAbstractAction *actObject, const Q
     }
     else
     {
-        qDebug()<<"Register Object:"<<objectName<<actObject;
+        qDebug()<<"FreyaLib > "<<"Register Object:"<<objectName<<actObject;
         m_FreyaActObjectMap.insert(objectName, actObject);
         return m_FreyaActObjectMap.contains(objectName);
     }
@@ -199,7 +199,7 @@ bool FreyaPublicRegister::RegisterObject(FreyaAbstractAction *actObject, const Q
 
 bool FreyaPublicRegister::UnRegisterObject(const QString &objectName)
 {
-    qDebug()<<"Unregister Object:"<<objectName<<m_FreyaActObjectMap.value(objectName);
+    qDebug()<<"FreyaLib > "<<"Unregister Object:"<<objectName<<m_FreyaActObjectMap.value(objectName);
     m_FreyaActObjectMap.remove(objectName);
     return !m_FreyaActObjectMap.contains(objectName);
 }

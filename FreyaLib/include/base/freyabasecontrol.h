@@ -45,7 +45,7 @@ public:
 
     bool RequestExecution(void *pRequester = NULL);
     bool RequestExecution(const quint64 &command, void *pRequester = NULL);
-    bool RequestExecution(FreyaBaseData *pBaseData, void *pRequester = NULL);
+    bool RequestExecution(const FreyaBaseData &BaseData, void *pRequester = NULL);
 
     void *FreyaRequester(){return m_RequesterVec.size()>0?m_RequesterVec.back():NULL;}
 private:
@@ -59,7 +59,7 @@ public:
         if(NULL == pFreyaBaseControl)
         {
             pFreyaBaseControl = new FreyaBaseControl();
-            qDebug()<<"Structure FreyaBaseControl"<<pFreyaBaseControl;
+            qDebug()<<"FreyaLib > "<<"Structure FreyaBaseControl"<<pFreyaBaseControl;
         }
         return pFreyaBaseControl;
     }

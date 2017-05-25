@@ -11,7 +11,7 @@ FreyaBasePlugin::FreyaBasePlugin(QString PlatformID, FreyaBaseControl *pControl,
     connectToServer(PlatformID, QIODevice::ReadWrite);
     if(waitForConnected(1000))
     {
-        qDebug()<<"Temp=>"<<"FreyaBasePlugin:"<<"Request connected!";
+        qDebug()<<"FreyaLib > "<<"FreyaBasePlugin:"<<"Request connected!";
         FreyaBaseData data;
         data.command = FREYALIB_CMD_PLUGINREQUEST;
         write(FreyaBaseData::Serialize(data));
@@ -89,11 +89,11 @@ void FreyaBasePlugin::OnPluginReadyRead()
     FreyaBaseData data = FreyaBaseData::Unserialize(m_Pusher->readAll());
     if(FREYALIB_CMD_CONNECTRESULT == data.command)
     {
-        qDebug()<<"Temp=>"<<"FreyaBasePlugin:"<<"Plugin connect success!";
+        qDebug()<<"FreyaLib > "<<"FreyaBasePlugin:"<<"Plugin connect success!";
         emit ToPluginConnected(PluginConnected());
     }
     else
     {
-        m_FreyaBaseControl->RequestExecution(&data, this);
+        m_FreyaBaseControl->RequestExecution(data, this);
     }
 }
