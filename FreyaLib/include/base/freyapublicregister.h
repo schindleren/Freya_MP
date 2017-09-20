@@ -11,6 +11,8 @@
 #include <QDebug>
 #include <QJsonObject>
 #include <QJsonDocument>
+#include <QSharedPointer>
+
 #include "freyalib_global.h"
 
 enum ConfModType{
@@ -21,6 +23,10 @@ enum ConfModType{
 
 class FreyaBaseJson;
 class FreyaAbstractAction;
+struct FreyaBaseData;
+
+typedef QSharedPointer<FreyaBaseData> FreyaData;
+
 struct FreyaBaseData
 {
     QString     dataID;
@@ -43,9 +49,19 @@ struct FreyaBaseData
     {
         qDebug()<<"FreyaLib > "<<"delete freya data. ID: "<<dataID;
     }
-    static QByteArray Serialize(const FreyaBaseData & data);
+    static QByteArray Serialize(const FreyaData data);
+    static FreyaData Unserialize(const QByteArray & ba);
 
-    static FreyaBaseData Unserialize(const QByteArray & ba);
+    static FreyaData CreateDate()
+    {
+        FreyaData pDate(new FreyaBaseData());
+        return pDate;
+    }
+    static FreyaData CreateDate(const FreyaBaseData & other)
+    {
+        FreyaData pDate(new FreyaBaseData(other));
+        return pDate;
+    }
 };
 
 class FreyaPublicRegister
@@ -53,9 +69,9 @@ class FreyaPublicRegister
 public:
     explicit FreyaPublicRegister();
 
-    bool InsertBaseData(FreyaBaseData* pData);
-    FreyaBaseData* FindBaseData(const QString &dataID);
-    FreyaBaseData* TakeBaseData(const QString &dataID);
+    bool InsertFreyaData(const FreyaData pData);
+    FreyaData FindFreyaData(const QString &dataID);
+    FreyaData TakeFreyaData(const QString &dataID);
 
     bool CheckFreyaLibConfig(const QString &filePath, const QString &configKey);
     QVariantMap GetConfigFromFile(const QString &filePath);
@@ -77,7 +93,7 @@ private:
     bool ConfigModifyRecursion(QVariantMap &varMap, const QStringList &configPath, const ConfModType &type, const QVariant &var = QVariant());
 
 private:
-    QMap<QString, FreyaBaseData*>       m_FreyaDataMap;
+    QMap<QString, FreyaData>            m_FreyaDataMap;
     QPair<QString, QVariantMap>         m_FreyaConfigPair;
     QMap<QString, FreyaAbstractAction*> m_FreyaActObjectMap;
     QMap<quint64, QString>              m_FreyaCmdMap;

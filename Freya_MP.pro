@@ -6,5 +6,4 @@
 
 TEMPLATE = subdirs
 
-SUBDIRS += FreyaLib FreyaIM
-#SUBDIRS += FreyaMS
+SUBDIRS += FreyaLib FreyaTest FreyaPlugin

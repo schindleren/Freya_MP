@@ -3,6 +3,8 @@
 
 #include "freyalib_global.h"
 #include "freyaabstractcontrol.h"
+#include "freyapublicregister.h"
+
 #include <vector>
 #include <QDebug>
 
@@ -12,7 +14,6 @@
 #define FREYA_REQUESTEXECUTION_NON              FreyaBaseControl::GetFreyaControl()->RequestExecution(this)
 #define FREYA_REQUESTEXECUTION(data)            FreyaBaseControl::GetFreyaControl()->RequestExecution(data, this)
 
-struct FreyaBaseData;
 class FreyaPublicRegister;
 class FreyaAbstractAction;
 class FREYALIBSHARED_EXPORT FreyaBaseControl : public FreyaAbstractControl
@@ -39,13 +40,13 @@ public:
     void DeleteAllAction(const QList<FreyaAbstractAction*> &except = QList<FreyaAbstractAction*>());
     void DeleteAllAction(const QStringList &except);
 
-    bool InsertBaseData(FreyaBaseData *pData);
-    FreyaBaseData *FindBaseData(const QString &dataID);
-    FreyaBaseData *TakeBaseData(const QString &dataID);
+    bool InsertFreyaData(const FreyaData pData);
+    FreyaData FindFreyaData(const QString &dataID);
+    FreyaData TakeFreyaData(const QString &dataID);
 
     bool RequestExecution(void *pRequester = NULL);
     bool RequestExecution(const quint64 &command, void *pRequester = NULL);
-    bool RequestExecution(const FreyaBaseData &BaseData, void *pRequester = NULL);
+    bool RequestExecution(const FreyaData BaseData, void *pRequester = NULL);
 
     void *FreyaRequester(){return m_RequesterVec.size()>0?m_RequesterVec.back():NULL;}
 private:

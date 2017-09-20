@@ -13,8 +13,8 @@ FreyaPluginPusher::FreyaPluginPusher(QString PluginID, FreyaBaseControl *pContro
     {
         qDebug()<<"FreyaLib > "<<"FreyaPluginPusher:"<<"success!";
         connect(m_Pusher, SIGNAL(readyRead()), this, SLOT(OnReadyRead()));
-        FreyaBaseData data;
-        data.command = FREYALIB_CMD_CONNECTRESULT;
+        FreyaData data = FreyaBaseData::CreateDate();
+        data->command = FREYALIB_CMD_CONNECTRESULT;
         m_Pusher->write(FreyaBaseData::Serialize(data));
     }
 }
@@ -24,17 +24,17 @@ void FreyaPluginPusher::PusherExcute(const quint64 &command)
     if(m_MsgAuth & command)
     {
         qDebug()<<"FreyaLib > "<<"PusherExcute:"<<hex<<"Command:"<<command<<"To:"<<m_PluginID;
-        FreyaBaseData data;
-        data.command = command;
+        FreyaData data = FreyaBaseData::CreateDate();
+        data->command = command;
         m_Pusher->write(FreyaBaseData::Serialize(data));
     }
 }
 
-void FreyaPluginPusher::PusherExcute(const FreyaBaseData &data)
+void FreyaPluginPusher::PusherExcute(const FreyaData data)
 {
-    if(m_MsgAuth & data.command)
+    if(m_MsgAuth & data->command)
     {
-        qDebug()<<"FreyaLib > "<<"PusherExcute:"<<hex<<"Command:"<<data.command<<"To:"<<m_PluginID;
+        qDebug()<<"FreyaLib > "<<"PusherExcute:"<<hex<<"Command:"<<data->command<<"To:"<<m_PluginID;
         m_Pusher->write(FreyaBaseData::Serialize(data));
     }
 }
@@ -43,7 +43,7 @@ void FreyaPluginPusher::run()
 {
     while(!m_DataIDList.isEmpty())
     {
-        FreyaBaseData *pData = m_FreyaControl->TakeBaseData(m_DataIDList.takeFirst());
+        FreyaData pData = m_FreyaControl->TakeFreyaData(m_DataIDList.takeFirst());
         if(!pData)
             return;
 
@@ -54,7 +54,7 @@ void FreyaPluginPusher::run()
             QStringList CmdAuthList = AuthCodeMap.value(FREYALIB_TYP_PLUGINCMDAUTH).toStringList();
             foreach (const QString &MsgCode, MsgAuthList)
             {
-                FreyaBaseData *pCodeData = m_FreyaControl->FindBaseData(MsgCode);
+                FreyaData pCodeData = m_FreyaControl->FindFreyaData(MsgCode);
                 if(pCodeData)
                 {
                     m_MsgAuth = (m_MsgAuth | pCodeData->arguments.toInt());
@@ -63,7 +63,7 @@ void FreyaPluginPusher::run()
             qDebug()<<"FreyaLib > "<<"PluginID:"<<m_PluginID<<"MsgAuth:"<<hex<<m_MsgAuth;
             foreach (const QString &CmdCode, CmdAuthList)
             {
-                FreyaBaseData *pCodeData = m_FreyaControl->FindBaseData(CmdCode);
+                FreyaData pCodeData = m_FreyaControl->FindFreyaData(CmdCode);
                 if(pCodeData)
                 {
                     m_CmdAuth = (m_CmdAuth | pCodeData->arguments.toInt());
@@ -76,20 +76,19 @@ void FreyaPluginPusher::run()
             if(m_CmdAuth & pData->command)
             {
                 qDebug()<<"FreyaLib > "<<"Allow up command:"<<hex<<pData->command<<"From:"<<m_PluginID;
-//                m_FreyaControl->RequestExecution(pData, parent());
-                FreyaBaseData aData(*pData);
+                FreyaData aData(pData);
                 emit ToPluginRequest(aData);
             }
         }
-        delete pData;
+//        delete pData;
     }
 }
 
 void FreyaPluginPusher::OnReadyRead()
 {
-    FreyaBaseData data = FreyaBaseData::Unserialize(m_Pusher->readAll());
-    m_FreyaControl->InsertBaseData(new FreyaBaseData(data));
-    m_DataIDList.append(data.dataID);
+    FreyaData data = FreyaBaseData::Unserialize(m_Pusher->readAll());
+    m_FreyaControl->InsertFreyaData(data);
+    m_DataIDList.append(data->dataID);
 
     if(!isRunning())
     {
@@ -144,17 +143,17 @@ void FreyaBaseExtension::DefineAuthCode(const QStringList &MsgAuth, const QStrin
 {
     for(int i = 0; i < qMin(MsgAuth.size(), 4); ++i)
     {
-        FreyaBaseData *pData = new FreyaBaseData;
+        FreyaData pData = FreyaBaseData::CreateDate();
         pData->dataID = MsgAuth.at(i);
         pData->arguments = qPow(2, i); //0x01 0x02 0x04 0x08
-        m_FreyaBaseControl->InsertBaseData(pData);
+        m_FreyaBaseControl->InsertFreyaData(pData);
     }
     for(int j = 0; j < qMin(CmdAuth.size(), 4); ++j)
     {
-        FreyaBaseData *pData = new FreyaBaseData;
+        FreyaData pData = FreyaBaseData::CreateDate();
         pData->dataID = CmdAuth.at(j);
         pData->arguments = qPow(2, j) * 0x10; //0x10 0x20 0x40 0x80
-        m_FreyaBaseControl->InsertBaseData(pData);
+        m_FreyaBaseControl->InsertFreyaData(pData);
     }
 }
 
@@ -168,9 +167,9 @@ void FreyaBaseExtension::Execute(const quint64 &command)
     }
 }
 
-void FreyaBaseExtension::Execute(const FreyaBaseData &data)
+void FreyaBaseExtension::Execute(const FreyaData data)
 {
-    qDebug()<<"FreyaLib > "<<"Ext_Execution:"<<"DataID:"<<data.dataID<<"Command:"<<hex<<data.command<<dec<<"Arguments:"<<data.arguments;
+    qDebug()<<"FreyaLib > "<<"Ext_Execution:"<<"DataID:"<<data->dataID<<"Command:"<<hex<<data->command<<dec<<"Arguments:"<<data->arguments;
     QListIterator<FreyaPluginPusher*> PusherIT(m_PusherList);
     while(PusherIT.hasNext())
     {
@@ -189,20 +188,20 @@ void FreyaBaseExtension::OnReadyRead()
     QLocalSocket *plugin = qobject_cast<QLocalSocket *>(sender());
     if (plugin)
     {
-        FreyaBaseData data = FreyaBaseData::Unserialize(plugin->readAll());
-        if(FREYALIB_CMD_PLUGINREQUEST == data.command)
+        FreyaData data = FreyaBaseData::Unserialize(plugin->readAll());
+        if(FREYALIB_CMD_PLUGINREQUEST == data->command)
         {
             qDebug()<<"FreyaLib > "<<"FreyaBaseExtension:"<<hex<<FREYALIB_CMD_PLUGINREQUEST;
-            FreyaBaseData resultData;
-            resultData.command = FREYALIB_CMD_PLUGINRESULT;
+            FreyaData resultData = FreyaBaseData::CreateDate();
+            resultData->command = FREYALIB_CMD_PLUGINRESULT;
             QString PluginID = QUuid::createUuid().toString().toLower();
-            resultData.arguments = PluginID;
+            resultData->arguments = PluginID;
             m_CurrentPluginID = PluginID;
             plugin->write(FreyaBaseData::Serialize(resultData));
         }
-        else if(FREYALIB_CMD_CONNECTREQUEST == data.command)
+        else if(FREYALIB_CMD_CONNECTREQUEST == data->command)
         {
-            QString PluginID = data.arguments.toString().toLower();
+            QString PluginID = data->arguments.toString().toLower();
             qDebug()<<"FreyaLib > "<<"FreyaBaseExtension:"<<hex<<FREYALIB_CMD_CONNECTREQUEST<<PluginID;
             if(m_CurrentPluginID == PluginID)
             {
@@ -224,7 +223,7 @@ void FreyaBaseExtension::OnPusherDisconnected()
     }
 }
 
-void FreyaBaseExtension::OnPuserRequest(FreyaBaseData data)
+void FreyaBaseExtension::OnPuserRequest(const FreyaData data)
 {
     m_FreyaControl->RequestExecution(data, this);
 }

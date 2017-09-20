@@ -12,8 +12,8 @@ FreyaBasePlugin::FreyaBasePlugin(QString PlatformID, FreyaBaseControl *pControl,
     if(waitForConnected(1000))
     {
         qDebug()<<"FreyaLib > "<<"FreyaBasePlugin:"<<"Request connected!";
-        FreyaBaseData data;
-        data.command = FREYALIB_CMD_PLUGINREQUEST;
+        FreyaData data = FreyaBaseData::CreateDate();
+        data->command = FREYALIB_CMD_PLUGINREQUEST;
         write(FreyaBaseData::Serialize(data));
     }
 }
@@ -28,12 +28,12 @@ bool FreyaBasePlugin::ImportPluginAuth(const QStringList &MsgCode, const QString
 {
     if(m_Pusher)
     {
-        FreyaBaseData data;
-        data.command = FREYALIB_CMD_PLUGINAUTHREQUEST;
+        FreyaData data = FreyaBaseData::CreateDate();
+        data->command = FREYALIB_CMD_PLUGINAUTHREQUEST;
         QVariantMap dataMap;
         dataMap.insert(FREYALIB_TYP_PLUGINMSGAUTH, MsgCode);
         dataMap.insert(FREYALIB_TYP_PLUGINCMDAUTH, CmdCode);
-        data.arguments = dataMap;
+        data->arguments = dataMap;
         return m_Pusher->write(FreyaBaseData::Serialize(data));
     }
     return false;
@@ -43,17 +43,17 @@ void FreyaBasePlugin::PluginWrite(const quint64 &command)
 {
     if(m_Pusher)
     {
-        FreyaBaseData data;
-        data.command = command;
+        FreyaData data = FreyaBaseData::CreateDate();
+        data->command = command;
         m_Pusher->write(FreyaBaseData::Serialize(data));
     }
 }
 
-void FreyaBasePlugin::PluginWrite(FreyaBaseData *pData)
+void FreyaBasePlugin::PluginWrite(const FreyaData pData)
 {
     if(m_Pusher)
     {
-        m_Pusher->write(FreyaBaseData::Serialize(*pData));
+        m_Pusher->write(FreyaBaseData::Serialize(pData));
     }
 }
 
@@ -61,19 +61,19 @@ void FreyaBasePlugin::Execute(const quint64 &/*command*/)
 {
 }
 
-void FreyaBasePlugin::Execute(FreyaBaseData */*pData*/)
+void FreyaBasePlugin::Execute(const FreyaData /*pData*/)
 {
 }
 
 void FreyaBasePlugin::OnReadyRead()
 {
-    FreyaBaseData data = FreyaBaseData::Unserialize(readAll());
-    if(FREYALIB_CMD_PLUGINRESULT == data.command)
+    FreyaData data = FreyaBaseData::Unserialize(readAll());
+    if(FREYALIB_CMD_PLUGINRESULT == data->command)
     {
-        m_PluginServer->listen(data.arguments.toString());
-        FreyaBaseData connectData;
-        connectData.command = FREYALIB_CMD_CONNECTREQUEST;
-        connectData.arguments = m_PluginServer->serverName();
+        m_PluginServer->listen(data->arguments.toString());
+        FreyaData connectData = FreyaBaseData::CreateDate();
+        connectData->command = FREYALIB_CMD_CONNECTREQUEST;
+        connectData->arguments = m_PluginServer->serverName();
         write(FreyaBaseData::Serialize(connectData));
     }
 }
@@ -86,8 +86,8 @@ void FreyaBasePlugin::OnPusherConnected()
 
 void FreyaBasePlugin::OnPluginReadyRead()
 {
-    FreyaBaseData data = FreyaBaseData::Unserialize(m_Pusher->readAll());
-    if(FREYALIB_CMD_CONNECTRESULT == data.command)
+    FreyaData data = FreyaBaseData::Unserialize(m_Pusher->readAll());
+    if(FREYALIB_CMD_CONNECTRESULT == data->command)
     {
         qDebug()<<"FreyaLib > "<<"FreyaBasePlugin:"<<"Plugin connect success!";
         emit ToPluginConnected(PluginConnected());

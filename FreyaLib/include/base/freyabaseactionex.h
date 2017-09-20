@@ -16,15 +16,15 @@ public:
 
 private:
     void Execute(const quint64 &command);
-    void Execute(const FreyaBaseData &data);
+    void Execute(const FreyaData data);
 
 protected slots:
     virtual void OnExecuteEx(const quint64 &command);
-    virtual void OnExecuteEx(QSharedPointer<FreyaBaseData> data);
+    virtual void OnExecuteEx(const FreyaData data);
 
 signals:
     void ToExecute(const quint64 &command);
-    void ToExecute(QSharedPointer<FreyaBaseData> pData);
+    void ToExecute(const FreyaData pData);
 
 protected:
     FreyaBaseControl    *m_FreyaBaseControl;

@@ -7,8 +7,6 @@ FreyaBaseControl::FreyaBaseControl() :
     FreyaAbstractControl(),m_FreyaPublicRegister(NULL)
 {
     m_FreyaPublicRegister = new FreyaPublicRegister();
-    qRegisterMetaType<FreyaBaseData>("FreyaBaseData");
-    qRegisterMetaType<QSharedPointer<FreyaBaseData> >("QSharedPointer<FreyaBaseData>");
 }
 
 FreyaBaseControl::~FreyaBaseControl()
@@ -102,19 +100,19 @@ void FreyaBaseControl::DeleteAllAction(const QStringList &except)
     DeleteAllAction(ActionList);
 }
 
-bool FreyaBaseControl::InsertBaseData(FreyaBaseData *pData)
+bool FreyaBaseControl::InsertFreyaData(const FreyaData pData)
 {
-    return m_FreyaPublicRegister->InsertBaseData(pData);
+    return m_FreyaPublicRegister->InsertFreyaData(pData);
 }
 
-FreyaBaseData *FreyaBaseControl::FindBaseData(const QString &dataID)
+FreyaData FreyaBaseControl::FindFreyaData(const QString &dataID)
 {
-    return m_FreyaPublicRegister->FindBaseData(dataID);
+    return m_FreyaPublicRegister->FindFreyaData(dataID);
 }
 
-FreyaBaseData *FreyaBaseControl::TakeBaseData(const QString &dataID)
+FreyaData FreyaBaseControl::TakeFreyaData(const QString &dataID)
 {
-    return m_FreyaPublicRegister->TakeBaseData(dataID);
+    return m_FreyaPublicRegister->TakeFreyaData(dataID);
 }
 
 bool FreyaBaseControl::RequestExecution(void *pRequester)
@@ -161,9 +159,9 @@ bool FreyaBaseControl::RequestExecution(const quint64 &command, void *pRequester
     return r;
 }
 
-bool FreyaBaseControl::RequestExecution(const FreyaBaseData &BaseData, void *pRequester)
+bool FreyaBaseControl::RequestExecution(const FreyaData BaseData, void *pRequester)
 {
-    qDebug()<<"FreyaLib > "<<"Execution:"<<"DataID:"<<BaseData.dataID<<"Command:"<<hex<<BaseData.command<<dec<<"Arguments:"<<BaseData.arguments<<"From:"<<pRequester;
+    qDebug()<<"FreyaLib > "<<"Execution:"<<"DataID:"<<BaseData->dataID<<"Command:"<<hex<<BaseData->command<<dec<<"Arguments:"<<BaseData->arguments<<"From:"<<pRequester;
     bool r = false;
     QStringList ActionNames = m_FreyaPublicRegister->AllRegisterAction().keys();
     m_RequesterVec.push_back(pRequester);

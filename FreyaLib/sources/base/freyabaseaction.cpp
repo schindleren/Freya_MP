@@ -28,6 +28,6 @@ void FreyaBaseAction::Execute(const quint64 &/*command*/)
 {
 }
 
-void FreyaBaseAction::Execute(const FreyaBaseData &/*data*/)
+void FreyaBaseAction::Execute(const FreyaData/*data*/)
 {
 }

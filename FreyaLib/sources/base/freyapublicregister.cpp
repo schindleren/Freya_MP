@@ -5,10 +5,12 @@
 
 FreyaPublicRegister::FreyaPublicRegister()
 {
-    qRegisterMetaType<FreyaBaseData>("FreyaBaseData");
+//    qRegisterMetaType<FreyaBaseData>("FreyaBaseData");
+    qRegisterMetaType<QSharedPointer<FreyaBaseData> >("QSharedPointer<FreyaBaseData>");
+    qRegisterMetaType<FreyaData>("FreyaData");
 }
 
-bool FreyaPublicRegister::InsertBaseData(FreyaBaseData *pData)
+bool FreyaPublicRegister::InsertFreyaData(const FreyaData pData)
 {
     if(m_FreyaDataMap.contains(pData->dataID))
     {
@@ -18,12 +20,12 @@ bool FreyaPublicRegister::InsertBaseData(FreyaBaseData *pData)
     return true;
 }
 
-FreyaBaseData* FreyaPublicRegister::FindBaseData(const QString &dataID)
+FreyaData FreyaPublicRegister::FindFreyaData(const QString &dataID)
 {
     return m_FreyaDataMap.value(dataID, NULL);
 }
 
-FreyaBaseData* FreyaPublicRegister::TakeBaseData(const QString &dataID)
+FreyaData FreyaPublicRegister::TakeFreyaData(const QString &dataID)
 {
     if(m_FreyaDataMap.contains(dataID))
         return m_FreyaDataMap.take(dataID);
@@ -270,30 +272,30 @@ bool FreyaPublicRegister::ConfigModifyRecursion(QVariantMap &varMap, const QStri
     return false;
 }
 
-QByteArray FreyaBaseData::Serialize(const FreyaBaseData &data)
+QByteArray FreyaBaseData::Serialize(const FreyaData data)
 {
     QByteArray ba;
     QDataStream stream(&ba, QIODevice::WriteOnly);
     QVariantMap varMap;
-    varMap.insert(FREYALIB_TYP_CMD, data.command);
-    varMap.insert(FREYALIB_TYP_ARG, data.arguments);
+    varMap.insert(FREYALIB_TYP_CMD, data->command);
+    varMap.insert(FREYALIB_TYP_ARG, data->arguments);
     QJsonDocument jsonDoc(QJsonObject::fromVariantMap(varMap));
-    stream<<data.dataID<<jsonDoc.toJson();
+    stream<<data->dataID<<jsonDoc.toJson();
     return ba;
 }
 
-FreyaBaseData FreyaBaseData::Unserialize(const QByteArray &ba)
+FreyaData FreyaBaseData::Unserialize(const QByteArray &ba)
 {
-    FreyaBaseData data;
+    FreyaData data = FreyaBaseData::CreateDate();
     QDataStream stream(ba);
     QByteArray varBa;
-    stream>>data.dataID>>varBa;
+    stream>>data->dataID>>varBa;
     QJsonDocument jsonDoc = QJsonDocument::fromJson(varBa);
     QVariantMap varMap = jsonDoc.object().toVariantMap();
     if(!varMap.isEmpty())
     {
-        data.command = varMap.value(FREYALIB_TYP_CMD).toULongLong();
-        data.arguments = varMap.value(FREYALIB_TYP_ARG);
+        data->command = varMap.value(FREYALIB_TYP_CMD).toULongLong();
+        data->arguments = varMap.value(FREYALIB_TYP_ARG);
     }
     return data;
 }

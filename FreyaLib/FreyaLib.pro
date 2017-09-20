@@ -5,18 +5,18 @@
 #-------------------------------------------------
 include(FreyaLib.pri)
 
-DESTDIR = $$PWD/bin
-DLLDESTDIR = $$PWD/bin
-MOC_DIR = $$PWD/freya_out
-UI_DIR = $$PWD/freya_out
-OBJECTS_DIR = $$PWD/freya_out
+DESTDIR = $$PWD/../bin
+DLLDESTDIR = $$PWD/../bin
+#MOC_DIR = $$PWD/freya_out
+#UI_DIR = $$PWD/freya_out
+#OBJECTS_DIR = $$PWD/freya_out
 
 TARGET = $$FREYALIB_NAME
 
 TEMPLATE = lib
 
-VERSION = 3.1.0.6
-DEFINES += FREYAVER=\\\"3.1.0.6\\\"
+VERSION = 3.2.0.7
+DEFINES += FREYAVER=\\\"3.2.0.7\\\"
 QMAKE_TARGET_COMPANY = "SchindlerenDesign"
 QMAKE_TARGET_PRODUCT = FreyaLib
 QMAKE_TARGET_DESCRIPTION = C++ application development framework.
