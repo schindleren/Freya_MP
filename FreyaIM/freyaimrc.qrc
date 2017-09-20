@@ -1,5 +1,0 @@
-<RCC>
-    <qresource prefix="/icon">
-        <file alias="freyaico">resource/freyaimicon.png</file>
-    </qresource>
-</RCC>
