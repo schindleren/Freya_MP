@@ -8,6 +8,7 @@ FreyaBaseControl::FreyaBaseControl() :
 {
     m_FreyaPublicRegister = new FreyaPublicRegister();
     qRegisterMetaType<FreyaBaseData>("FreyaBaseData");
+    qRegisterMetaType<QSharedPointer<FreyaBaseData> >("QSharedPointer<FreyaBaseData>");
 }
 
 FreyaBaseControl::~FreyaBaseControl()
