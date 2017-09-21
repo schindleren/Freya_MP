@@ -32,7 +32,7 @@ void FreyaBaseActionEx::OnExecuteEx(const quint64 &command)
     qDebug()<<"FreyaLib > "<<"ActionEx_Execute:" << hex << command;
 }
 
-void FreyaBaseActionEx::OnExecuteEx(FreyaData data)
+void FreyaBaseActionEx::OnExecuteEx(const FreyaData data)
 {
     qDebug()<<"FreyaLib > "<<"ActionEx_Execute:"<< hex << data->command << data->dataID;
 }
