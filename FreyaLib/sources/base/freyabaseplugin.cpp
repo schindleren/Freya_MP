@@ -28,6 +28,7 @@ bool FreyaBasePlugin::ImportPluginAuth(const QStringList &MsgCode, const QString
 {
     if(m_Pusher)
     {
+        qDebug()<<"FreyaLib > " << "FreyaBasePlugin:" << "ImportPluginAuth" << MsgCode.size() << CmdCode.size();
         FreyaData data = FreyaBaseData::CreateDate();
         data->command = FREYALIB_CMD_PLUGINAUTHREQUEST;
         QVariantMap dataMap;
@@ -46,6 +47,7 @@ void FreyaBasePlugin::PluginWrite(const quint64 &command)
         FreyaData data = FreyaBaseData::CreateDate();
         data->command = command;
         m_Pusher->write(FreyaBaseData::Serialize(data));
+        qDebug()<<"FreyaLib > " << "FreyaBasePlugin:" << "PluginWrite" << command;
     }
 }
 
@@ -54,6 +56,7 @@ void FreyaBasePlugin::PluginWrite(const FreyaData pData)
     if(m_Pusher)
     {
         m_Pusher->write(FreyaBaseData::Serialize(pData));
+        qDebug()<<"FreyaLib > " << "FreyaBasePlugin:" << "PluginWriteData" << pData->command;
     }
 }
 
@@ -89,7 +92,7 @@ void FreyaBasePlugin::OnPluginReadyRead()
     FreyaData data = FreyaBaseData::Unserialize(m_Pusher->readAll());
     if(FREYALIB_CMD_CONNECTRESULT == data->command)
     {
-        qDebug()<<"FreyaLib > "<<"FreyaBasePlugin:"<<"Plugin connect success!";
+        qDebug() << "FreyaLib > " << "FreyaBasePlugin:" << "Plugin connect success!";
         emit ToPluginConnected(PluginConnected());
     }
     else

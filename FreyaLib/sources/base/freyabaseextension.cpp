@@ -207,7 +207,7 @@ void FreyaBaseExtension::OnReadyRead()
             {
                 FreyaPluginPusher *pPusher = new FreyaPluginPusher(PluginID, m_FreyaBaseControl, this);
                 connect(pPusher, SIGNAL(ToDisconnected()), this, SLOT(OnPusherDisconnected()));
-                connect(pPusher, SIGNAL(ToPluginRequest(FreyaBaseData)), this, SLOT(OnPuserRequest(FreyaBaseData)), Qt::BlockingQueuedConnection);
+                connect(pPusher, SIGNAL(ToPluginRequest(FreyaData)), this, SLOT(OnPuserRequest(FreyaData)), Qt::BlockingQueuedConnection);
                 m_PusherList.append(pPusher);
             }
         }

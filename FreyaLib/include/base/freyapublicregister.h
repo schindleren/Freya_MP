@@ -55,11 +55,13 @@ struct FreyaBaseData
     static FreyaData CreateDate()
     {
         FreyaData pDate(new FreyaBaseData());
+        qDebug()<<"FreyaLib > "<<"Create freya data. ID: "<<pDate->dataID;
         return pDate;
     }
     static FreyaData CreateDate(const FreyaBaseData & other)
     {
         FreyaData pDate(new FreyaBaseData(other));
+        qDebug()<<"FreyaLib > "<<"Create freya data. ID: "<<pDate->dataID;
         return pDate;
     }
 };

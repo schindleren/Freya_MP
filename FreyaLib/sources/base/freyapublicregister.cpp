@@ -22,7 +22,7 @@ bool FreyaPublicRegister::InsertFreyaData(const FreyaData pData)
 
 FreyaData FreyaPublicRegister::FindFreyaData(const QString &dataID)
 {
-    return m_FreyaDataMap.value(dataID, NULL);
+    return m_FreyaDataMap.value(dataID, FreyaData(NULL));
 }
 
 FreyaData FreyaPublicRegister::TakeFreyaData(const QString &dataID)
@@ -30,7 +30,7 @@ FreyaData FreyaPublicRegister::TakeFreyaData(const QString &dataID)
     if(m_FreyaDataMap.contains(dataID))
         return m_FreyaDataMap.take(dataID);
     else
-        return NULL;
+        return FreyaData(NULL);
 }
 
 bool FreyaPublicRegister::CheckFreyaLibConfig(const QString &filePath, const QString &configKey)

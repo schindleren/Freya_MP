@@ -15,8 +15,8 @@ TARGET = $$FREYALIB_NAME
 
 TEMPLATE = lib
 
-VERSION = 3.2.0.7
-DEFINES += FREYAVER=\\\"3.2.0.7\\\"
+VERSION = 3.2.0.8
+DEFINES += FREYAVER=\\\"3.2.0.8\\\"
 QMAKE_TARGET_COMPANY = "SchindlerenDesign"
 QMAKE_TARGET_PRODUCT = FreyaLib
 QMAKE_TARGET_DESCRIPTION = C++ application development framework.
