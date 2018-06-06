@@ -4,84 +4,87 @@
 #include <QDateTime>
 
 FreyaBaseControl::FreyaBaseControl() :
-    FreyaAbstractControl(),m_FreyaPublicRegister(NULL)
+    QObject(NULL), FreyaAbstractControl(), m_CMDDistribution(this)
 {
-    m_FreyaPublicRegister = new FreyaPublicRegister();
+    connect(this, SIGNAL(ToRequestExecution(FreyaData, void*)), &m_CMDDistribution, SLOT(OnRequestExecution(FreyaData, void*)), Qt::QueuedConnection);
 }
 
 FreyaBaseControl::~FreyaBaseControl()
 {
-    if(m_FreyaPublicRegister)
-    {
-        delete m_FreyaPublicRegister;
-    }
     qDebug()<<"FreyaLib > "<<"Destructor"<<this;
-}
-
-bool FreyaBaseControl::CheckFreyaLibConfig(const QString &filePath, const QString &configKey)
-{
-    return m_FreyaPublicRegister->CheckFreyaLibConfig(filePath, configKey);
 }
 
 QVariantMap FreyaBaseControl::GetConfigFromFile(const QString &filePath)
 {
-    return m_FreyaPublicRegister->GetConfigFromFile(filePath);
+    return m_FreyaPublicRegister.GetConfigFromFile(filePath);
 }
 
 bool FreyaBaseControl::SetConfigToFile(const QString &filePath, const QVariantMap &varmap)
 {
-    return m_FreyaPublicRegister->SetConfigToFile(filePath, varmap);
+    return m_FreyaPublicRegister.SetConfigToFile(filePath, varmap);
 }
 
 QVariant FreyaBaseControl::GetConfig(const QStringList &configPath)
 {
-    return m_FreyaPublicRegister->GetConfig(configPath);
+    return m_FreyaPublicRegister.GetConfig(configPath);
 }
 
 bool FreyaBaseControl::SetConfig(const QStringList &configPath, const QVariant &var)
 {
-    return m_FreyaPublicRegister->SetConfig(configPath, var);
+    return m_FreyaPublicRegister.SetConfig(configPath, var);
 }
 
 bool FreyaBaseControl::InsertConfig(const QStringList &configPath, const QVariant &var)
 {
-    return m_FreyaPublicRegister->InsertConfig(configPath, var);
+    return m_FreyaPublicRegister.InsertConfig(configPath, var);
 }
 
 bool FreyaBaseControl::RemoveConfig(const QStringList &configPath)
 {
-    return m_FreyaPublicRegister->RemoveConfig(configPath);
+    return m_FreyaPublicRegister.RemoveConfig(configPath);
 }
 
-bool FreyaBaseControl::RegisterObject(FreyaAbstractAction *actObject, const char *objectName)
+bool FreyaBaseControl::RegisterObject(FreyaBaseAction *actObject, const char *objectName)
 {
-    return m_FreyaPublicRegister->RegisterObject(actObject, objectName);
+    return m_FreyaPublicRegister.RegisterObject(actObject, objectName);
 }
 
 bool FreyaBaseControl::UnRegisterObject(const QString &objectName)
 {
-    return m_FreyaPublicRegister->UnRegisterObject(objectName);
+    return m_FreyaPublicRegister.UnRegisterObject(objectName);
 }
 
-bool FreyaBaseControl::UnRegisterObject(FreyaAbstractAction *actObject)
+bool FreyaBaseControl::UnRegisterObject(FreyaBaseAction *actObject)
 {
-    return m_FreyaPublicRegister->UnRegisterObject(GetActionObjectName(actObject));
+    return m_FreyaPublicRegister.UnRegisterObject(GetActionObjectName(actObject));
 }
 
-FreyaAbstractAction *FreyaBaseControl::GetActionObject(const QString &objectName)
+bool FreyaBaseControl::RegisterCommand(FreyaBaseAction *actObject, QList<quint64> commandList)
 {
-    return m_FreyaPublicRegister->GetObject(objectName);
+    qDebug()<<"FreyaLib > "<<"RegisterCommand object:"<< GetActionObjectName(actObject) << hex <<"commands:"<<commandList;
+    return m_FreyaPublicRegister.RegisterCommand(actObject, commandList);
 }
 
-QString FreyaBaseControl::GetActionObjectName(FreyaAbstractAction *actObject)
+bool FreyaBaseControl::UnRegisterCommand(FreyaBaseAction *actObject)
 {
-    return m_FreyaPublicRegister->GetObjectName(actObject);
+    qDebug()<<"FreyaLib > "<<"UnRegisterCommand object:"<< GetActionObjectName(actObject);
+    return m_FreyaPublicRegister.UnRegisterCommand(actObject);
 }
 
-void FreyaBaseControl::DeleteAllAction(const QList<FreyaAbstractAction *> &except)
+FreyaBaseAction *FreyaBaseControl::GetActionObject(const QString &objectName)
 {
-    QList<FreyaAbstractAction *> ActionList = m_FreyaPublicRegister->AllRegisterAction().values();
-    foreach (FreyaAbstractAction *pAction, ActionList)
+    return m_FreyaPublicRegister.GetObject(objectName);
+}
+
+QString FreyaBaseControl::GetActionObjectName(FreyaBaseAction *actObject)
+{
+    return m_FreyaPublicRegister.GetObjectName(actObject);
+}
+
+void FreyaBaseControl::DeleteAllAction(const QList<FreyaBaseAction *> &except)
+{
+    QList<FreyaBaseAction *> ActionList = m_FreyaPublicRegister.AllRegisterAction().values();
+    foreach (FreyaBaseAction *pAction, ActionList)
     {
         if(!except.contains(pAction))
         {
@@ -92,91 +95,60 @@ void FreyaBaseControl::DeleteAllAction(const QList<FreyaAbstractAction *> &excep
 
 void FreyaBaseControl::DeleteAllAction(const QStringList &except)
 {
-    QList<FreyaAbstractAction *> ActionList;
+    QList<FreyaBaseAction *> ActionList;
     foreach (const QString &ActionName, except)
     {
-        ActionList.append(m_FreyaPublicRegister->GetObject(ActionName));
+        ActionList.append(m_FreyaPublicRegister.GetObject(ActionName));
     }
     DeleteAllAction(ActionList);
 }
 
 bool FreyaBaseControl::InsertFreyaData(const FreyaData pData)
 {
-    return m_FreyaPublicRegister->InsertFreyaData(pData);
+    return m_FreyaPublicRegister.InsertFreyaData(pData);
 }
 
 FreyaData FreyaBaseControl::FindFreyaData(const QString &dataID)
 {
-    return m_FreyaPublicRegister->FindFreyaData(dataID);
+    return m_FreyaPublicRegister.FindFreyaData(dataID);
 }
 
 FreyaData FreyaBaseControl::TakeFreyaData(const QString &dataID)
 {
-    return m_FreyaPublicRegister->TakeFreyaData(dataID);
+    return m_FreyaPublicRegister.TakeFreyaData(dataID);
 }
 
 bool FreyaBaseControl::RequestExecution(void *pRequester)
 {
-    qDebug()<<"FreyaLib > "<<"Execution:"<<"without arguments"<<"From:"<<pRequester;
+    qDebug() << "FreyaLib > " << "Execution:" << "without arguments" << "From:" << pRequester;
     bool r = false;
-    QStringList ActionNames = m_FreyaPublicRegister->AllRegisterAction().keys();
-    m_RequesterVec.push_back(pRequester);
-    foreach (const QString &ActionName, ActionNames)
+    m_pRequester = pRequester;
+    QHashIterator<QString, FreyaBaseAction*> ActionIt(m_FreyaPublicRegister.AllRegisterAction());
+    while (ActionIt.hasNext())
     {
+        ActionIt.next();
         r = true;
-        FreyaAbstractAction *pAction = m_FreyaPublicRegister->AllRegisterAction().value(ActionName, NULL);
+        FreyaBaseAction *pAction = ActionIt.value();
         if(pAction)
         {
             pAction->Execute();
         }
     }
-    if(m_RequesterVec.size() > 0)
-    {
-        m_RequesterVec.pop_back();
-    }
+    m_pRequester = NULL;
     return r;
 }
 
-bool FreyaBaseControl::RequestExecution(const quint64 &command, void *pRequester)
+void FreyaBaseControl::RequestExecution(const quint64 &command, void *pRequester)
 {
-    qDebug()<<"FreyaLib > "<<"Execution:"<<"Command:"<<hex<<command<<dec<<"From:"<<pRequester;
-    bool r = false;
-    QStringList ActionNames = m_FreyaPublicRegister->AllRegisterAction().keys();
-    m_RequesterVec.push_back(pRequester);
-    foreach (const QString &ActionName, ActionNames)
-    {
-        r = true;
-        FreyaAbstractAction *pAction = m_FreyaPublicRegister->AllRegisterAction().value(ActionName, NULL);
-        if(pAction)
-        {
-            pAction->Execute(command);
-        }
-    }
-    if(m_RequesterVec.size() > 0)
-    {
-        m_RequesterVec.pop_back();
-    }
-    return r;
+    return RequestExecution(FreyaBaseData::CreateDate(command), pRequester);
 }
 
-bool FreyaBaseControl::RequestExecution(const FreyaData BaseData, void *pRequester)
+void FreyaBaseControl::RequestExecution(const FreyaData BaseData, void *pRequester)
 {
-    qDebug()<<"FreyaLib > "<<"Execution:"<<"DataID:"<<BaseData->dataID<<"Command:"<<hex<<BaseData->command<<dec<<"Arguments:"<<BaseData->arguments<<"From:"<<pRequester;
-    bool r = false;
-    QStringList ActionNames = m_FreyaPublicRegister->AllRegisterAction().keys();
-    m_RequesterVec.push_back(pRequester);
-    foreach (const QString &ActionName, ActionNames)
-    {
-        r = true;
-        FreyaAbstractAction *pAction = m_FreyaPublicRegister->AllRegisterAction().value(ActionName, NULL);
-        if(pAction)
-        {
-            pAction->Execute(BaseData);
-        }
-    }
-    if(m_RequesterVec.size() > 0)
-    {
-        m_RequesterVec.pop_back();
-    }
-    return r;
+    emit ToRequestExecution(BaseData, pRequester);
+}
+
+void FreyaBaseControl::ActionExecution(FreyaBaseAction* pAction, const FreyaData BaseData)
+{
+    pAction->Execute(BaseData);
 }

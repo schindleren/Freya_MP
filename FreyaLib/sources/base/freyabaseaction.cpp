@@ -1,8 +1,9 @@
 #include "freyabaseaction.h"
 
 FreyaBaseAction::FreyaBaseAction(FreyaBaseControl *pControl, const char *objectName) :
-    FreyaAbstractAction(), m_FreyaBaseControl(pControl)
+    FreyaAbstractAction(), m_FreyaBaseControl(pControl), m_CommandList(QList<quint64>())
 {
+    // Register this action to control
     if(NULL != objectName)
     {
         if(NULL != m_FreyaBaseControl /*&& NULL != m_FreyaBaseControl->parent()*/)
@@ -20,14 +21,10 @@ FreyaBaseAction::~FreyaBaseAction()
     }
 }
 
-void FreyaBaseAction::Execute()
+void FreyaBaseAction::RegisterCommands()
 {
-}
-
-void FreyaBaseAction::Execute(const quint64 &/*command*/)
-{
-}
-
-void FreyaBaseAction::Execute(const FreyaData/*data*/)
-{
+    // Register command to control
+    FreyaData registerData = FreyaBaseData::CreateDate(FREYALIB_CMD_CMDREGREQUEST);
+    this->Execute(registerData);
+    m_FreyaBaseControl->RegisterCommand(this, m_CommandList);
 }

@@ -8,60 +8,31 @@ FreyaPublicRegister::FreyaPublicRegister()
 //    qRegisterMetaType<FreyaBaseData>("FreyaBaseData");
     qRegisterMetaType<QSharedPointer<FreyaBaseData> >("QSharedPointer<FreyaBaseData>");
     qRegisterMetaType<FreyaData>("FreyaData");
+    qRegisterMetaType<FreyaBaseAction>("FreyaBaseAction");
+    qRegisterMetaType<FreyaBaseAction*>("FreyaBaseAction*");
 }
 
 bool FreyaPublicRegister::InsertFreyaData(const FreyaData pData)
 {
-    if(m_FreyaDataMap.contains(pData->dataID))
+    if(m_FreyaDataHash.contains(pData->dataID))
     {
         return false;
     }
-    m_FreyaDataMap.insert(pData->dataID, pData);
+    m_FreyaDataHash.insert(pData->dataID, pData);
     return true;
 }
 
 FreyaData FreyaPublicRegister::FindFreyaData(const QString &dataID)
 {
-    return m_FreyaDataMap.value(dataID, FreyaData(NULL));
+    return m_FreyaDataHash.value(dataID, FreyaData(NULL));
 }
 
 FreyaData FreyaPublicRegister::TakeFreyaData(const QString &dataID)
 {
-    if(m_FreyaDataMap.contains(dataID))
-        return m_FreyaDataMap.take(dataID);
+    if(m_FreyaDataHash.contains(dataID))
+        return m_FreyaDataHash.take(dataID);
     else
         return FreyaData(NULL);
-}
-
-bool FreyaPublicRegister::CheckFreyaLibConfig(const QString &filePath, const QString &configKey)
-{
-    if(configKey.isEmpty())
-    {
-        return false;
-    }
-    GetConfigFromFile(filePath);
-    if(configKey.toLower() != FreyaCryptogram::CheckSum(filePath))
-    {
-        QStringList VerList = GetConfig(QStringList()<<FREYALIB_KEY_LIBCONFIG<<FREYALIB_KEY_SUPVER).toStringList();
-        if(!VerList.contains(configKey, Qt::CaseInsensitive))
-        {
-            return false;
-        }
-    }
-
-    QVariantMap cmdMap = GetConfig(QStringList()<<FREYALIB_KEY_LIBCONFIG<<FREYALIB_KEY_CMDDEF).toMap();
-    QMapIterator<QString, QVariant> cmdMapIT(cmdMap);
-    while (cmdMapIT.hasNext())
-    {
-        QString key = cmdMapIT.next().key();
-        QString value;
-#ifdef QT_DEBUG
-        value = cmdMapIT.value().toString();
-#endif
-        bool ok;
-        m_FreyaCmdMap.insert(key.toULongLong(&ok, 16), value);
-    }
-    return true;
 }
 
 QVariantMap FreyaPublicRegister::GetConfigFromFile(const QString &filePath)
@@ -185,40 +156,65 @@ bool FreyaPublicRegister::RemoveConfig(const QStringList &configPath)
     return false;
 }
 
-bool FreyaPublicRegister::RegisterObject(FreyaAbstractAction *actObject, const QString &objectName)
+bool FreyaPublicRegister::RegisterObject(FreyaBaseAction *actObject, const QString &objectName)
 {
-    if(m_FreyaActObjectMap.contains(objectName) || NULL == actObject)
+    if(m_FreyaActObjectHash.contains(objectName) || NULL == actObject)
     {
         return false;
     }
     else
     {
         qDebug()<<"FreyaLib > "<<"Register Object:"<<objectName<<actObject;
-        m_FreyaActObjectMap.insert(objectName, actObject);
-        return m_FreyaActObjectMap.contains(objectName);
+        m_FreyaActObjectHash.insert(objectName, actObject);
+        return m_FreyaActObjectHash.contains(objectName);
     }
 }
 
 bool FreyaPublicRegister::UnRegisterObject(const QString &objectName)
 {
-    qDebug()<<"FreyaLib > "<<"Unregister Object:"<<objectName<<m_FreyaActObjectMap.value(objectName);
-    m_FreyaActObjectMap.remove(objectName);
-    return !m_FreyaActObjectMap.contains(objectName);
+    qDebug()<<"FreyaLib > "<<"Unregister Object:"<<objectName<<m_FreyaActObjectHash.value(objectName);
+    m_FreyaActObjectHash.remove(objectName);
+    return !m_FreyaActObjectHash.contains(objectName);
 }
 
-FreyaAbstractAction *FreyaPublicRegister::GetObject(const QString &objectName)
+bool FreyaPublicRegister::RegisterCommand(FreyaBaseAction* actObject, QList<quint64> commandList)
 {
-    return m_FreyaActObjectMap.value(objectName, NULL);
+    if(actObject && commandList.size() > 0)
+    {
+        m_FreyaCmdHash.insert(actObject, commandList);
+        return m_FreyaCmdHash.contains(actObject);
+    }
+    return false;
 }
 
-QString FreyaPublicRegister::GetObjectName(FreyaAbstractAction *actObject)
+bool FreyaPublicRegister::UnRegisterCommand(FreyaBaseAction* actObject)
 {
-    return m_FreyaActObjectMap.key(actObject, "");
+    m_FreyaCmdHash.remove(actObject);
+    return !m_FreyaCmdHash.contains(actObject);
 }
 
-QMap<QString, FreyaAbstractAction*> &FreyaPublicRegister::AllRegisterAction()
+bool FreyaPublicRegister::CheckObjectCommand(FreyaBaseAction* actObject, quint64 command)
 {
-    return m_FreyaActObjectMap;
+    if(m_FreyaCmdHash.contains(actObject))
+    {
+        return m_FreyaCmdHash.value(actObject).contains(command);
+    }
+    return true;
+}
+
+FreyaBaseAction *FreyaPublicRegister::GetObject(const QString &objectName)
+{
+    return m_FreyaActObjectHash.value(objectName, NULL);
+}
+
+QString FreyaPublicRegister::GetObjectName(FreyaBaseAction *actObject)
+{
+    return m_FreyaActObjectHash.key(actObject, "");
+}
+
+QHash<QString, FreyaBaseAction*> &FreyaPublicRegister::AllRegisterAction()
+{
+    return m_FreyaActObjectHash;
 }
 
 bool FreyaPublicRegister::ConfigModifyRecursion(QVariantMap &varMap, const QStringList &configPath, const ConfModType &type, const QVariant &var)
@@ -248,6 +244,7 @@ bool FreyaPublicRegister::ConfigModifyRecursion(QVariantMap &varMap, const QStri
                     varMap.insert(key, var);
                     return (varMap.value(key) == var);
                 }
+                break;
             }
             default:
                 return false;
@@ -272,6 +269,26 @@ bool FreyaPublicRegister::ConfigModifyRecursion(QVariantMap &varMap, const QStri
     return false;
 }
 
+QVariant FreyaBaseData::GetArgument()
+{
+    return arguments.value(FREYALIB_FLG_ARG, QVariant());
+}
+
+void FreyaBaseData::SetArgument(const QVariant &value)
+{
+    arguments.insert(FREYALIB_FLG_ARG, value);
+}
+
+QVariant FreyaBaseData::GetArgument(const QString &key)
+{
+    return arguments.value(key);
+}
+
+void FreyaBaseData::SetArgument(const QString &key, const QVariant &value)
+{
+    arguments.insert(key, value);
+}
+
 QByteArray FreyaBaseData::Serialize(const FreyaData data)
 {
     QByteArray ba;
@@ -286,16 +303,21 @@ QByteArray FreyaBaseData::Serialize(const FreyaData data)
 
 FreyaData FreyaBaseData::Unserialize(const QByteArray &ba)
 {
-    FreyaData data = FreyaBaseData::CreateDate();
+    QString dataId;
     QDataStream stream(ba);
     QByteArray varBa;
-    stream>>data->dataID>>varBa;
+    stream>>dataId>>varBa;
     QJsonDocument jsonDoc = QJsonDocument::fromJson(varBa);
     QVariantMap varMap = jsonDoc.object().toVariantMap();
-    if(!varMap.isEmpty())
+    if(dataId.isEmpty() || varMap.isEmpty())
     {
-        data->command = varMap.value(FREYALIB_TYP_CMD).toULongLong();
-        data->arguments = varMap.value(FREYALIB_TYP_ARG);
+        return FreyaData(NULL);
     }
-    return data;
+    else
+    {
+        FreyaData pData = FreyaBaseData::CreateDate(varMap.value(FREYALIB_TYP_CMD).toULongLong());
+        pData->dataID = dataId;
+        pData->arguments = varMap.value(FREYALIB_TYP_ARG).toMap();
+        return pData;
+    }
 }

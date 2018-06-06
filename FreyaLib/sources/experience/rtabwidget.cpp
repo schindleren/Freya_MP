@@ -29,27 +29,11 @@ RTabButton::RTabButton(QWidget *parent):
     connect(m_CloseBtn, SIGNAL(clicked()), this, SIGNAL(ToCloseBtnClicked()));
 }
 
-/***************************************************
-  Author: RenDan
-  Date: 2015-07-23
-  Description: Set tab close btn size
-  Input: QSize
-  Output: void
-  Return: void
-****************************************************/
 void RTabButton::SetCloseBtnSize(const QSize &size)
 {
     m_CloseBtn->setFixedSize(size);
 }
 
-/***************************************************
-  Author: RenDan
-  Date: 2015-07-23
-  Description: Set tab close able
-  Input: bool
-  Output: void
-  Return: void
-****************************************************/
 void RTabButton::SetCloseable(bool closeable)
 {
     m_CloseBtn->setVisible(closeable);
@@ -62,55 +46,23 @@ RTabWidget::RTabWidget(QWidget *parent, bool isExpand):
     InitWidget();
 }
 
-/***************************************************
-  Author: RenDan
-  Date: 2013-01-08
-  Description: Set object name
-  Input: QString
-  Output: void
-  Return: void
-****************************************************/
 void RTabWidget::SetTabBackObjectName( const QString &ObjName )
 {
     m_TabBackWidget->setObjectName(ObjName);
 }
 
-/***************************************************
-  Author: RenDan
-  Date: 2013-05-10
-  Description: Set width of tab back widget
-  Input: int
-  Output: void
-  Return: void
-****************************************************/
 void RTabWidget::SetTabBKWidth(const int &w)
 {
     m_nTabBKWidth = w;
     m_TabBackWidget->setFixedWidth(w);
 }
 
-/***************************************************
-  Author: RenDan
-  Date: 2013-05-10
-  Description: Set height of tab back widget
-  Input: int
-  Output: void
-  Return: void
-****************************************************/
 void RTabWidget::SetTabBKHeight(const int &h)
 {
     m_nTabBKHeight = h;
     m_TabBackWidget->setFixedHeight(h);
 }
 
-/***************************************************
-  Author: RenDan
-  Date: 2015-08-20
-  Description: Set width of tab back widget
-  Input: int
-  Output: void
-  Return: void
-****************************************************/
 void RTabWidget::SetTabWidth(const int &w)
 {
     m_nTabWidth = w;
@@ -119,19 +71,11 @@ void RTabWidget::SetTabWidth(const int &w)
     {
         if(btn)
         {
-            btn->setFixedHeight(m_nTabWidth);
+            btn->setFixedWidth(m_nTabWidth);
         }
     }
 }
 
-/***************************************************
-  Author: RenDan
-  Date: 2015-08-20
-  Description: Set height of tab back widget
-  Input: int
-  Output: void
-  Return: void
-****************************************************/
 void RTabWidget::SetTabHeight(const int &h)
 {
     m_nTabHeight = h;
@@ -145,14 +89,6 @@ void RTabWidget::SetTabHeight(const int &h)
     }
 }
 
-/***************************************************
-  Author: RenDan
-  Date: 2015-02-04
-  Description: Set position of tab
-  Input: RTabWidget::site
-  Output: void
-  Return: void
-****************************************************/
 void RTabWidget::SetTabSite(const RTabSite::site &site)
 {
     m_TabWidgetBkLay->removeWidget(m_TabBackWidget);
@@ -188,14 +124,6 @@ void RTabWidget::SetTabSite(const RTabSite::site &site)
     }
 }
 
-/***************************************************
-  Author: RenDan
-  Date: 2015-02-04
-  Description: Set tab enable or disable
-  Input: int, bool
-  Output: void
-  Return: void
-****************************************************/
 void RTabWidget::SetTabEnable(const int &index, bool enabled)
 {
     QAbstractButton *btn = m_TabBtnGroup->button(index);
@@ -205,28 +133,12 @@ void RTabWidget::SetTabEnable(const int &index, bool enabled)
     }
 }
 
-/***************************************************
-  Author: RenDan
-  Date: 2013-05-10
-  Description: Fix tab position
-  Input: int, int
-  Output: void
-  Return: void
-****************************************************/
 void RTabWidget::SetTabMarginAndSpacing(const int &Margin, const int &Spacing)
 {
     m_TabLay->setMargin(Margin);
     m_TabLay->setSpacing(Spacing);
 }
 
-/***************************************************
-  Author: RenDan
-  Date: 2015-07-23
-  Description: Tab is need close btn or not
-  Input: bool
-  Output: void
-  Return: void
-****************************************************/
 void RTabWidget::SetTabsCloseable(bool closeable)
 {
     if(m_isTabCloseable != closeable)
@@ -244,14 +156,6 @@ void RTabWidget::SetTabsCloseable(bool closeable)
     }
 }
 
-/***************************************************
-  Author: RenDan
-  Date: 2015-07-23
-  Description: Tab‘s close btn size
-  Input: const QSize &
-  Output: void
-  Return: void
-****************************************************/
 void RTabWidget::SetTabsCloseBtnSize(const QSize &size)
 {
     if(m_CloseBtnSize != size)
@@ -269,40 +173,17 @@ void RTabWidget::SetTabsCloseBtnSize(const QSize &size)
     }
 }
 
-/***************************************************
-  Author: RenDan
-  Date: 2013-05-10
-  Description: Add widget before tab
-  Input: QWidget*
-  Output: void
-  Return: void
-****************************************************/
+
 void RTabWidget::InsertWidgetBeforeTab(QWidget *widget)
 {
     m_TabLay->insertWidget(0, widget);
 }
 
-/***************************************************
-  Author: RenDan
-  Date: 2013-05-10
-  Description: Add widget after tab
-  Input: QWidget*
-  Output: void
-  Return: void
-****************************************************/
 void RTabWidget::InsertWidgetAfterTab(QWidget *widget)
 {
     m_TabLay->addWidget(widget);
 }
 
-/***************************************************
-  Author: RenDan
-  Date: 2013-01-08
-  Description: init widget
-  Input: void
-  Output: void
-  Return: void
-****************************************************/
 void RTabWidget::InitWidget()
 {
     m_TabWidgetBkLay = new QVBoxLayout;
@@ -328,14 +209,6 @@ void RTabWidget::InitWidget()
     m_TabWidgetBkLay->addWidget(m_PageWidgetStack);
 }
 
-/***************************************************
-  Author: RenDan
-  Date: 2013-01-08
-  Description: Add a tab
-  Input: QWidget*, QString, QString, QIcon
-  Output: void
-  Return: void
-****************************************************/
 void RTabWidget::AddTabAndWidget(QWidget* tabWidget, const QString &objName, const QString &tabTitle, const QIcon &tabIcon)
 {
     RTabButton *nTabBtn = new RTabButton(this);
@@ -360,14 +233,6 @@ void RTabWidget::AddTabAndWidget(QWidget* tabWidget, const QString &objName, con
     m_PageWidgetStack->addWidget(tabWidget);
 }
 
-/***************************************************
-  Author: RenDan
-  Date: 2015-07-24
-  Description: Remove a tab by index(not delete the widget)
-  Input: int
-  Output: void
-  Return: void
-****************************************************/
 void RTabWidget::RemoveTab(int index)
 {
     QAbstractButton *pBtn = m_TabBtnGroup->button(index);
@@ -378,53 +243,21 @@ void RTabWidget::RemoveTab(int index)
     m_PageWidgetStack->removeWidget(pWidget);
 }
 
-/***************************************************
-  Author: RenDan
-  Date: 2013-01-08
-  Description: Get current index of tab
-  Input: void
-  Output: void
-  Return: int
-****************************************************/
 int RTabWidget::CurrentTabPage()
 {
     return m_PageWidgetStack->currentIndex();
 }
 
-/***************************************************
-  Author: RenDan
-  Date: 2015-02-05
-  Description: Get widget of index
-  Input: int
-  Output: void
-  Return: QWidget*
-****************************************************/
 QWidget *RTabWidget::Widget(const int &index)
 {
     return ((m_PageWidgetStack->count() > index) ? m_PageWidgetStack->widget(index) : 0);
 }
 
-/***************************************************
-  Author: RenDan
-  Date: 2015-02-05
-  Description: Get index of widget
-  Input: QWidget*
-  Output: void
-  Return: int
-****************************************************/
 int RTabWidget::Index(QWidget *widget)
 {
     return m_PageWidgetStack->indexOf(widget);
 }
 
-/***************************************************
-  Author: RenDan
-  Date: 2014-10-20
-  Description: Change tab
-  Input: int
-  Output: void
-  Return: void
-****************************************************/
 void RTabWidget::OnCurrentTab(int index)
 {
     if(index < m_PageWidgetStack->count())
@@ -438,14 +271,6 @@ void RTabWidget::OnCurrentTab(int index)
     }
 }
 
-/***************************************************
-  Author: RenDan
-  Date: 2015-07-24
-  Description: when click close button on tab
-  Input: void
-  Output: void
-  Return: void
-****************************************************/
 void RTabWidget::OnCloseBtnClicked()
 {
     QAbstractButton *pBtn = qobject_cast<QAbstractButton*>(sender());

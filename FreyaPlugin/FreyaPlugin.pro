@@ -53,4 +53,6 @@ HEADERS += \
 INCLUDEPATH += $$FREYALIB_INCLUDEPATH \
             $$PWD/../FreyaTest
 
-LIBS += -L$$PWD/../bin -l$${FREYALIB_NAME}3
+LIBS += -L$$PWD/../bin
+unix { LIBS += -l$${FREYALIB_NAME} }
+win32 { LIBS += -l$${FREYALIB_NAME}5 }

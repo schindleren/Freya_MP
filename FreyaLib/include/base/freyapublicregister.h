@@ -22,22 +22,26 @@ enum ConfModType{
 };
 
 class FreyaBaseJson;
-class FreyaAbstractAction;
+class FreyaBaseAction;
 struct FreyaBaseData;
 
 typedef QSharedPointer<FreyaBaseData> FreyaData;
 
-struct FreyaBaseData
+class FREYALIBSHARED_EXPORT FreyaBaseData
 {
+public:
     QString     dataID;
     quint64     command;
-    QVariant    arguments;
 
+private:
+    QVariantMap arguments;
+
+public:
     FreyaBaseData()
     {
         dataID = QUuid::createUuid().toString();
         command = 0x0;
-        arguments = QVariant();
+        arguments = QVariantMap();
     }
     FreyaBaseData(const FreyaBaseData & other)
     {
@@ -47,21 +51,28 @@ struct FreyaBaseData
     }
     ~FreyaBaseData()
     {
-        qDebug()<<"FreyaLib > "<<"delete freya data. ID: "<<dataID;
+//        qDebug()<<"FreyaLib > "<<"Delete freya data. ID: "<<dataID;
     }
+
+    QVariant GetArgument();
+    void SetArgument(const QVariant &value);
+    QVariant GetArgument(const QString &key);
+    void SetArgument(const QString &key, const QVariant &value);
+
     static QByteArray Serialize(const FreyaData data);
     static FreyaData Unserialize(const QByteArray & ba);
 
-    static FreyaData CreateDate()
+    static FreyaData CreateDate(const quint64 &cmd = 0)
     {
         FreyaData pDate(new FreyaBaseData());
-        qDebug()<<"FreyaLib > "<<"Create freya data. ID: "<<pDate->dataID;
+//        qDebug()<<"FreyaLib > "<<"Create freya data. ID: "<<pDate->dataID;
+        pDate->command = cmd;
         return pDate;
     }
     static FreyaData CreateDate(const FreyaBaseData & other)
     {
         FreyaData pDate(new FreyaBaseData(other));
-        qDebug()<<"FreyaLib > "<<"Create freya data. ID: "<<pDate->dataID;
+//        qDebug()<<"FreyaLib > "<<"Create freya data. ID: "<<pDate->dataID;
         return pDate;
     }
 };
@@ -75,7 +86,6 @@ public:
     FreyaData FindFreyaData(const QString &dataID);
     FreyaData TakeFreyaData(const QString &dataID);
 
-    bool CheckFreyaLibConfig(const QString &filePath, const QString &configKey);
     QVariantMap GetConfigFromFile(const QString &filePath);
     bool SetConfigToFile(const QString &filePath, const QVariantMap &varmap);
 
@@ -84,21 +94,24 @@ public:
     bool InsertConfig(const QStringList &configPath, const QVariant &var);
     bool RemoveConfig(const QStringList &configPath);
 
-    bool RegisterObject(FreyaAbstractAction *actObject, const QString &objectName);
+    bool RegisterObject(FreyaBaseAction *actObject, const QString &objectName);
     bool UnRegisterObject(const QString &objectName);
-    FreyaAbstractAction *GetObject(const QString &objectName);
-    QString GetObjectName(FreyaAbstractAction *actObject);
+    bool RegisterCommand(FreyaBaseAction* actObject, QList<quint64> commandList);
+    bool UnRegisterCommand(FreyaBaseAction* actObject);
+    bool CheckObjectCommand(FreyaBaseAction* actObject, quint64 command);
+    FreyaBaseAction *GetObject(const QString &objectName);
+    QString GetObjectName(FreyaBaseAction *actObject);
 
-    QMap<QString, FreyaAbstractAction*> &AllRegisterAction();
+    QHash<QString, FreyaBaseAction *> &AllRegisterAction();
 
 private:
     bool ConfigModifyRecursion(QVariantMap &varMap, const QStringList &configPath, const ConfModType &type, const QVariant &var = QVariant());
 
 private:
-    QMap<QString, FreyaData>            m_FreyaDataMap;
-    QPair<QString, QVariantMap>         m_FreyaConfigPair;
-    QMap<QString, FreyaAbstractAction*> m_FreyaActObjectMap;
-    QMap<quint64, QString>              m_FreyaCmdMap;
+    QHash<QString, FreyaData>                           m_FreyaDataHash;
+    QPair<QString, QVariantMap>                         m_FreyaConfigPair;
+    QHash<QString, FreyaBaseAction*>                    m_FreyaActObjectHash;
+    QHash<FreyaBaseAction*, QList<quint64> >            m_FreyaCmdHash;
 };
 
 #endif // FREYAPUBLICREGISTER_H

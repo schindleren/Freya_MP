@@ -6,10 +6,10 @@ LocalClientB::LocalClientB()
 {
 }
 
-void LocalClientB::Execute(const quint64 &command)
+void LocalClientB::Execute(const quint64 &/*command*/)
 {
 }
 
-void LocalClientB::Execute(const FreyaData data)
+void LocalClientB::Execute(const FreyaData /*data*/)
 {
 }

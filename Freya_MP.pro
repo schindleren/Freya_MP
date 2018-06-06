@@ -6,4 +6,4 @@
 
 TEMPLATE = subdirs
 
-SUBDIRS += FreyaLib FreyaTest FreyaPlugin
+SUBDIRS += FreyaLib FreyaLaunch FreyaRemote FreyaTest FreyaPlugin FreyaLaunchTestA FreyaLaunchTestB

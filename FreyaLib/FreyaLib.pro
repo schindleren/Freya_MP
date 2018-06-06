@@ -15,8 +15,6 @@ TARGET = $$FREYALIB_NAME
 
 TEMPLATE = lib
 
-VERSION = 3.2.0.8
-DEFINES += FREYAVER=\\\"3.2.0.8\\\"
 QMAKE_TARGET_COMPANY = "SchindlerenDesign"
 QMAKE_TARGET_PRODUCT = FreyaLib
 QMAKE_TARGET_DESCRIPTION = C++ application development framework.
@@ -35,20 +33,22 @@ SOURCES += sources/freyalib.cpp \
     sources/base/freyabasecontrol.cpp \
     sources/base/freyabaseaction.cpp \
     sources/base/freyapublicregister.cpp \
+    sources/base/freyacommanddistribution.cpp \
     sources/base/freyabasejson.cpp \
     sources/base/freyacryptogram.cpp \
     sources/base/freyabaseextension.cpp \
     sources/base/freyabaseplugin.cpp \
     sources/base/freyabaseactionex.cpp \
-    sources/experience/singleapplication.cpp \
+    sources/experience/singleapplication.cpp
 
-HEADERS += include/freyalib.h\
+HEADERS += include/freyalib.h \
     include/freyalib_global.h \
     include/abstract/freyaabstractaction.h \
     include/abstract/freyaabstractcontrol.h \
-    include/base/freyabasecontrol.h \
     include/base/freyabaseaction.h \
+    include/base/freyabasecontrol.h \
     include/base/freyapublicregister.h \
+    include/base/freyacommanddistribution.h \
     include/base/freyabasejson.h \
     include/base/freyacryptogram.h \
     include/base/freyabaseextension.h \

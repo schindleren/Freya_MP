@@ -22,7 +22,6 @@ public:
     void PluginWrite(const FreyaData pData);
 
 protected:
-    virtual void Execute(const quint64 &command);
     virtual void Execute(const FreyaData pData);
 
 signals:

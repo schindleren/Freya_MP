@@ -34,7 +34,7 @@ bool FreyaBasePlugin::ImportPluginAuth(const QStringList &MsgCode, const QString
         QVariantMap dataMap;
         dataMap.insert(FREYALIB_TYP_PLUGINMSGAUTH, MsgCode);
         dataMap.insert(FREYALIB_TYP_PLUGINCMDAUTH, CmdCode);
-        data->arguments = dataMap;
+        data->SetArgument(dataMap);
         return m_Pusher->write(FreyaBaseData::Serialize(data));
     }
     return false;
@@ -42,26 +42,17 @@ bool FreyaBasePlugin::ImportPluginAuth(const QStringList &MsgCode, const QString
 
 void FreyaBasePlugin::PluginWrite(const quint64 &command)
 {
-    if(m_Pusher)
-    {
-        FreyaData data = FreyaBaseData::CreateDate();
-        data->command = command;
-        m_Pusher->write(FreyaBaseData::Serialize(data));
-        qDebug()<<"FreyaLib > " << "FreyaBasePlugin:" << "PluginWrite" << command;
-    }
+    PluginWrite(FreyaBaseData::CreateDate(command));
 }
 
 void FreyaBasePlugin::PluginWrite(const FreyaData pData)
 {
     if(m_Pusher)
     {
+        pData->SetArgument(FREYALIB_FLG_PLUGINID, m_PluginServer->serverName());
         m_Pusher->write(FreyaBaseData::Serialize(pData));
-        qDebug()<<"FreyaLib > " << "FreyaBasePlugin:" << "PluginWriteData" << pData->command;
+        qDebug()<<"FreyaLib > " << "FreyaBasePlugin:" << "PluginWriteData" << hex << pData->command;
     }
-}
-
-void FreyaBasePlugin::Execute(const quint64 &/*command*/)
-{
 }
 
 void FreyaBasePlugin::Execute(const FreyaData /*pData*/)
@@ -73,10 +64,10 @@ void FreyaBasePlugin::OnReadyRead()
     FreyaData data = FreyaBaseData::Unserialize(readAll());
     if(FREYALIB_CMD_PLUGINRESULT == data->command)
     {
-        m_PluginServer->listen(data->arguments.toString());
+        m_PluginServer->listen(data->GetArgument().toString());
         FreyaData connectData = FreyaBaseData::CreateDate();
         connectData->command = FREYALIB_CMD_CONNECTREQUEST;
-        connectData->arguments = m_PluginServer->serverName();
+        connectData->SetArgument(m_PluginServer->serverName());
         write(FreyaBaseData::Serialize(connectData));
     }
 }
