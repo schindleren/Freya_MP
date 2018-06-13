@@ -193,6 +193,26 @@ bool FreyaPublicRegister::UnRegisterCommand(FreyaBaseAction* actObject)
     return !m_FreyaCmdHash.contains(actObject);
 }
 
+QWeakPointer<QEventLoop> FreyaPublicRegister::TakeQueryData(const QString &dataid)
+{
+    return m_QueryData.take(dataid);
+}
+
+bool FreyaPublicRegister::InsertQueryData(const QString &dataid, QWeakPointer<QEventLoop> loop)
+{
+    if(!m_QueryData.contains(dataid))
+    {
+        m_QueryData.insert(dataid, loop);
+        return true;
+    }
+    return false;
+}
+
+bool FreyaPublicRegister::CheckQueryData(const QString &dataid)
+{
+    return m_QueryData.contains(dataid);
+}
+
 bool FreyaPublicRegister::CheckObjectCommand(FreyaBaseAction* actObject, quint64 command)
 {
     if(m_FreyaCmdHash.contains(actObject))

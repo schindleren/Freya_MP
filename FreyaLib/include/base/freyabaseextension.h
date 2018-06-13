@@ -60,7 +60,7 @@ private slots:
 
 private:
     QList<FreyaPluginPusher*>           m_PusherList;
-    QString                             m_CurrentPluginID;
+    QStringList                         m_WaitPluginIDList;
     FreyaBaseControl                    *m_FreyaControl;
     bool                                m_isListening;
 };

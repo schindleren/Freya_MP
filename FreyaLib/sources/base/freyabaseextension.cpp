@@ -106,7 +106,7 @@ void FreyaPluginPusher::OnStateChanged(QLocalSocket::LocalSocketState state)
     case QLocalSocket::ClosingState:
     {
         qDebug()<<"FreyaLib > "<<"FreyaPluginPusher::OnStateChanged:"<<"ClosingState";
-        emit ToDisconnected();
+//        emit ToDisconnected();
     }
         break;
     default:
@@ -175,18 +175,19 @@ void FreyaBaseExtension::OnReadyRead()
             resultData->command = FREYALIB_CMD_PLUGINRESULT;
             QString PluginID = QUuid::createUuid().toString().toLower();
             resultData->SetArgument(PluginID);
-            m_CurrentPluginID = PluginID;
+            m_WaitPluginIDList.append(PluginID);
             plugin->write(FreyaBaseData::Serialize(resultData));
         }
         else if(FREYALIB_CMD_CONNECTREQUEST == data->command)
         {
             QString PluginID = data->GetArgument().toString().toLower();
             qDebug() << "FreyaLib > " << "FreyaBaseExtension:" << hex << FREYALIB_CMD_CONNECTREQUEST << PluginID;
-            if(m_CurrentPluginID == PluginID)
+            if(m_WaitPluginIDList.contains(PluginID))
             {
+                m_WaitPluginIDList.removeOne(PluginID);
                 FreyaPluginPusher *pPusher = new FreyaPluginPusher(PluginID, m_FreyaBaseControl);
                 connect(pPusher, SIGNAL(ToDisconnected()), this, SLOT(OnPusherDisconnected()));
-                connect(pPusher, SIGNAL(ToPluginRequest(FreyaData)), this, SLOT(OnPuserRequest(FreyaData)), Qt::BlockingQueuedConnection);
+                connect(pPusher, SIGNAL(ToPluginRequest(FreyaData)), this, SLOT(OnPuserRequest(FreyaData)), Qt::QueuedConnection);
                 m_PusherList.append(pPusher);
             }
         }
@@ -196,7 +197,7 @@ void FreyaBaseExtension::OnReadyRead()
 void FreyaBaseExtension::OnPusherDisconnected()
 {
     FreyaPluginPusher *pPusher = qobject_cast<FreyaPluginPusher*>(sender());
-    if(m_PusherList.removeOne(pPusher))
+    if(pPusher && m_PusherList.removeOne(pPusher))
     {
         pPusher->deleteLater();
     }

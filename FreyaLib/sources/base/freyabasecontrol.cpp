@@ -6,7 +6,6 @@
 FreyaBaseControl::FreyaBaseControl() :
     QObject(NULL), FreyaAbstractControl(), m_CMDDistribution(this)
 {
-    connect(this, SIGNAL(ToRequestExecution(FreyaData, void*)), &m_CMDDistribution, SLOT(OnRequestExecution(FreyaData, void*)), Qt::QueuedConnection);
 }
 
 FreyaBaseControl::~FreyaBaseControl()
@@ -138,14 +137,44 @@ bool FreyaBaseControl::RequestExecution(void *pRequester)
     return r;
 }
 
-void FreyaBaseControl::RequestExecution(const quint64 &command, void *pRequester)
+bool FreyaBaseControl::RequestExecution(const quint64 &command, void *pRequester, int msec)
 {
-    return RequestExecution(FreyaBaseData::CreateDate(command), pRequester);
+    return RequestExecution(FreyaBaseData::CreateDate(command), pRequester, msec);
 }
 
-void FreyaBaseControl::RequestExecution(const FreyaData BaseData, void *pRequester)
+bool FreyaBaseControl::RequestExecution(const FreyaData BaseData, void *pRequester, int msec)
 {
-    emit ToRequestExecution(BaseData, pRequester);
+    if(m_FreyaPublicRegister.CheckQueryData(BaseData->dataID))
+    {
+        QWeakPointer<QEventLoop> weakLoop = m_FreyaPublicRegister.TakeQueryData(BaseData->dataID);
+        if(!weakLoop.isNull())
+        {
+            weakLoop.toStrongRef()->quit();
+        }
+        return true;
+    }
+
+    BaseData->SetArgument(FREYALIB_FLG_REQUESTER, CUSTOMCLSTOVARIANT(pRequester));
+    m_CMDDistribution.InsertData(BaseData);
+
+    if(!m_CMDDistribution.isRunning())
+    {
+        m_CMDDistribution.start();
+    }
+
+    if(msec)
+    {
+        QSharedPointer<QEventLoop> shareLoop(new QEventLoop());
+        QTimer::singleShot(msec, shareLoop.data(), SLOT(quit()));
+        QWeakPointer<QEventLoop> weakLoop(shareLoop);
+        bool ret = m_FreyaPublicRegister.InsertQueryData(BaseData->dataID, weakLoop);
+        shareLoop->exec();
+        return (ret && !m_FreyaPublicRegister.CheckQueryData(BaseData->dataID));
+    }
+    else
+    {
+        return true;
+    }
 }
 
 void FreyaBaseControl::ActionExecution(FreyaBaseAction* pAction, const FreyaData BaseData)

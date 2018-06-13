@@ -10,6 +10,8 @@ FreyaLaunch::FreyaLaunch(QString launchKey) :
     FreyaBaseAction(FreyaBaseControl::GetFreyaControl(), FRYLAC_OBJ_LAUNCHER),
     m_LaunchKey(launchKey)
 {
+    RegisterCommands();
+
     qDebug() << "FreyaLaunch > " << "Freya Version:" << FreyaBaseControl::GetFreyaControl()->FreyaVersion();
 #ifdef  __linux
     system(QString("rm /tmp/%1").arg(FRYLAC_COD_PLATFORMID).toUtf8().constData());
@@ -49,17 +51,13 @@ void FreyaLaunch::launch()
 
 void FreyaLaunch::Execute(const FreyaData data)
 {
-    switch (data->command)
-    {
-    case FRYLAC_CMD_REMOTEQUIT:
-    {
+    auto RemoteQuit = [&]{
         qDebug() << "FreyaLaunch > " << "get command FRYLAC_CMD_REMOTEQUIT. Application will quit soon.";
         FREYA_REQUESTEXECUTION(FRYLAC_CMD_MODULEQUIT);
         QTimer::singleShot(1000, qApp, SLOT(quit()));
-    }
-        break;
-    case FRYLAC_CMD_REMOTECMD:
-    {
+    };
+
+    auto RemoteCMD = [&]{
         // FreyaRemote addlib#xxx.so
         QString arg = data->GetArgument().toString();
         QStringList argList = arg.split("#");
@@ -67,16 +65,10 @@ void FreyaLaunch::Execute(const FreyaData data)
         {
             LoadLibrary(argList.at(1));
         }
-    }
-        break;
-    default:
-        FreyaLaunch *reqAction = static_cast<FreyaLaunch*>(FreyaBaseControl::GetFreyaControl()->FreyaRequester());
-        if(!(reqAction && reqAction == this))
-        {
-            FREYA_REQUESTEXECUTION(data);
-        }
-        break;
-    }
+    };
+
+    FREYACONNECT(FRYLAC_CMD_REMOTEQUIT, RemoteQuit());
+    FREYACONNECT(FRYLAC_CMD_REMOTECMD, RemoteCMD());
 }
 
 void FreyaLaunch::LoadModules()

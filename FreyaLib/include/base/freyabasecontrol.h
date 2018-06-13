@@ -9,12 +9,15 @@
 #include <vector>
 #include <QDebug>
 #include <QThread>
+#include <QTimer>
+#include <QEventLoop>
 
 #define CUSTOMCLSTOVARIANT(pObject)             QVariant::fromValue((void*)pObject)
 #define VARIANTTOCUSTOMCLS(pObject, ClassName)  static_cast<ClassName*>(pObject.value<void*>())
 
 #define FREYA_REQUESTEXECUTION_NON              FreyaBaseControl::GetFreyaControl()->RequestExecution(this)
-#define FREYA_REQUESTEXECUTION(data)            FreyaBaseControl::GetFreyaControl()->RequestExecution(data, this)
+#define FREYA_REQUESTEXECUTION(data)            FreyaBaseControl::GetFreyaControl()->RequestExecution(data, this, 0)
+#define FREYA_QUERYEXECUTION(data)              FreyaBaseControl::GetFreyaControl()->RequestExecution(data, this, 2000)
 
 class FreyaPublicRegister;
 class FreyaBaseAction;
@@ -50,13 +53,10 @@ public:
     FreyaData TakeFreyaData(const QString &dataID);
 
     bool RequestExecution(void *pRequester = NULL);
-    void RequestExecution(const quint64 &command, void *pRequester = NULL);
-    void RequestExecution(const FreyaData BaseData, void *pRequester = NULL);
+    bool RequestExecution(const quint64 &command, void *pRequester = NULL, int msec = 0);
+    bool RequestExecution(const FreyaData BaseData, void *pRequester = NULL, int msec = 0);
 
     void *FreyaRequester(){return m_pRequester;}
-
-signals:
-    void ToRequestExecution(const FreyaData BaseData, void *pRequester = NULL);
 
 private slots:
     void ActionExecution(FreyaBaseAction* pAction, const FreyaData BaseData);

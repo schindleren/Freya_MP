@@ -6,18 +6,23 @@
 #include <QThread>
 
 class FreyaBaseControl;
-class FreyaCommandDistribution : public QObject
+class FreyaCommandDistribution : public QThread
 {
     Q_OBJECT
 public:
     explicit FreyaCommandDistribution(FreyaBaseControl *pControl);
 
-public slots:
-    void OnRequestExecution(const FreyaData BaseData, void *pRequester);
+    QStringList DataList();
+    bool InsertData(FreyaData data);
+    FreyaData FindData(const QString &dataId);
+
+protected:
+    virtual void run();
 
 private:
-    QThread             m_DistributionThread;
-    FreyaBaseControl    *m_pControl;
+    FreyaBaseControl                *m_pControl;
+    QStringList                     m_DataList;
+    QHash<QString, FreyaData>       m_DataQueue;
 };
 
 #endif // FREYACOMMANDDISTRIBUTION_H

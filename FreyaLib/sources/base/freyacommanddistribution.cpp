@@ -3,32 +3,52 @@
 #include "freyabaseactionex.h"
 
 FreyaCommandDistribution::FreyaCommandDistribution(FreyaBaseControl *pControl) :
-    QObject(NULL), m_pControl(pControl)
+    QThread(NULL), m_pControl(pControl)
 {
-    moveToThread(&m_DistributionThread);
-    m_DistributionThread.start();
 }
 
-void FreyaCommandDistribution::OnRequestExecution(const FreyaData BaseData, void *pRequester)
+QStringList FreyaCommandDistribution::DataList()
 {
-    m_pControl->InsertFreyaData(BaseData);
-    m_pControl->m_pRequester = pRequester;
-//    FreyaBaseAction *reqAction = static_cast<FreyaBaseAction*>(pRequester);
+    return m_DataList;
+}
 
-    qDebug() << "FreyaLib > " << "Execution:" << "DataID:" << BaseData->dataID
-             << "Command:" << hex << BaseData->command << dec << "Arguments:" << BaseData->GetArgument() << "From:" << m_pControl->m_pRequester;
-    QHashIterator<QString, FreyaBaseAction*> ActionIt(m_pControl->m_FreyaPublicRegister.AllRegisterAction());
-    while (ActionIt.hasNext())
+bool FreyaCommandDistribution::InsertData(FreyaData data)
+{
+    bool ret = m_DataList.contains(data->dataID);
+    m_DataList.append(data->dataID);
+    m_DataQueue.insert(data->dataID, data);
+    return ret;
+}
+
+FreyaData FreyaCommandDistribution::FindData(const QString &dataId)
+{
+    return m_DataQueue.value(dataId, FreyaData(NULL));
+}
+
+void FreyaCommandDistribution::run()
+{
+    while(!m_DataList.isEmpty())
     {
-        ActionIt.next();
-        FreyaBaseAction *pAction = ActionIt.value();
-        if(pAction && m_pControl->m_FreyaPublicRegister.CheckObjectCommand(pAction, BaseData->command))
+        FreyaData BaseData = m_DataQueue.take(m_DataList.takeFirst());
+        m_pControl->m_pRequester = VARIANTTOCUSTOMCLS(BaseData->GetArgument(FREYALIB_FLG_REQUESTER), void);
+
+//        FreyaBaseAction *reqAction = static_cast<FreyaBaseAction*>(pRequester);
+
+        qDebug() << "FreyaLib > " << "Execution:" << "DataID:" << BaseData->dataID
+                 << "Command:" << hex << BaseData->command << dec << "Arguments:" << BaseData->GetArgument() << "From:" << m_pControl->m_pRequester;
+        QHashIterator<QString, FreyaBaseAction*> ActionIt(m_pControl->m_FreyaPublicRegister.AllRegisterAction());
+        while (ActionIt.hasNext())
         {
-//            if(!(reqAction && reqAction == pAction))
+            ActionIt.next();
+            FreyaBaseAction *pAction = ActionIt.value();
+            if(pAction && m_pControl->m_FreyaPublicRegister.CheckObjectCommand(pAction, BaseData->command))
             {
-                QMetaObject::invokeMethod(m_pControl, "ActionExecution", Qt::BlockingQueuedConnection, Q_ARG(FreyaBaseAction*, pAction), Q_ARG(FreyaData, BaseData));
+//                if(!(reqAction && reqAction == pAction))
+                {
+                    QMetaObject::invokeMethod(m_pControl, "ActionExecution", Qt::QueuedConnection, Q_ARG(FreyaBaseAction*, pAction), Q_ARG(FreyaData, BaseData));
+                }
             }
         }
+        m_pControl->m_pRequester = NULL;
     }
-    m_pControl->m_pRequester = NULL;
 }

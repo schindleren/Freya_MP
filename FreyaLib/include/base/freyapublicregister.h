@@ -12,6 +12,7 @@
 #include <QJsonObject>
 #include <QJsonDocument>
 #include <QSharedPointer>
+#include <QEventLoop>
 
 #include "freyalib_global.h"
 
@@ -98,6 +99,9 @@ public:
     bool UnRegisterObject(const QString &objectName);
     bool RegisterCommand(FreyaBaseAction* actObject, QList<quint64> commandList);
     bool UnRegisterCommand(FreyaBaseAction* actObject);
+    bool InsertQueryData(const QString &dataid, QWeakPointer<QEventLoop> loop);
+    QWeakPointer<QEventLoop> TakeQueryData(const QString &dataid);
+    bool CheckQueryData(const QString &dataid);
     bool CheckObjectCommand(FreyaBaseAction* actObject, quint64 command);
     FreyaBaseAction *GetObject(const QString &objectName);
     QString GetObjectName(FreyaBaseAction *actObject);
@@ -112,6 +116,7 @@ private:
     QPair<QString, QVariantMap>                         m_FreyaConfigPair;
     QHash<QString, FreyaBaseAction*>                    m_FreyaActObjectHash;
     QHash<FreyaBaseAction*, QList<quint64> >            m_FreyaCmdHash;
+    QHash<QString, QWeakPointer<QEventLoop> >           m_QueryData;
 };
 
 #endif // FREYAPUBLICREGISTER_H

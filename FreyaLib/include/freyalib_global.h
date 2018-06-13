@@ -21,6 +21,7 @@
 #define FREYALIB_CMD_CMDREGREQUEST      0x0000000060000000//FreyaLib_Cmd_CommandRegisterRequest
 
 #define FREYALIB_FLG_PLUGINID           "FreyaLib_DataFlag_PluginID"
+#define FREYALIB_FLG_REQUESTER          "FreyaLib_DataFlag_Requester"
 #define FREYALIB_FLG_ARG                "FreyaLib_DataFlag_Arguments"
 
 #define FREYALIB_TYP_CMD                "FreyaLib_Type_Command"

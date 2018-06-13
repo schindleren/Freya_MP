@@ -7,6 +7,9 @@ int main(int argc, char *argv[])
 
     QApplication::setQuitOnLastWindowClosed(false);
 
+    //set current work path
+    QDir::setCurrent(QCoreApplication::applicationDirPath());
+
     QString launchKey = "";
     if (1 < argc)
     {
