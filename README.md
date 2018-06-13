@@ -1,1 +1,15 @@
-#Freya_MP
+#Freya_MP/FreyaLib
+
+概述：
+
+FreyaLib是一个基于Qt应用开发技术的可泛用框架。可以帮助程序员进行C/S架构和多层分布应用架构的设计。平台无关性的FreyaLib可以移植到包括但不限于Linux、Windows、Mac等平台。
+
+FreyaLib实现了一个标准的DCI框架。通过消息来驱动Control，在Control中对所有模块的控制，真正实现了模块间零耦合。Control数据分发通过异步收集，同步分发，在避免使用原语锁的基础上更高效的保证了线程安全。同时Control还提供了同步查询接口，实时返回查询结果，以保证程序员编码的连贯性。
+
+内部封装的FreyaData数据类型,方便了程序员给消息附带参数。Action模块可以通过对消息的订阅来更高效地配置Control的分发规则。上层应用开发过程中，程序员只需要实现基于FreyaAction的各个功能模块。
+
+FreyaLib通过监控消息分发，实现了对消息流转的日志打印，能帮助程序员快速调试程序。
+
+此外FreyaLib应用进程间通讯实现了一个插件扩展平台。独立运行的插件可以通过FreyaExt协议订阅FreyaExtension平台分发的数据。插件同样可以通过FreyaExt协议回传数据到FreyaExtension平台。FreyaExt协议通过消息等级和数据来源来保证插件和平台的数据安全。FreyaLib提供了FreyaExt协议服务端和客户端的完整实现，程序员在使用时不必重复编码。
+
+同时FreyaLib还提供了一些小工具和基于QtWidgets的基础界面的实现。程序员可以根据需要定制UI，基础界面同样具备FreyaData的消息通道。
