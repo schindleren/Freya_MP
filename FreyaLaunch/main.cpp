@@ -1,4 +1,6 @@
 #include "freyalaunch.h"
+#include "freyalog.h"
+#include "freya_global.h"
 #include <QApplication>
 
 int main(int argc, char *argv[])
@@ -9,6 +11,9 @@ int main(int argc, char *argv[])
 
     //set current work path
     QDir::setCurrent(QCoreApplication::applicationDirPath());
+
+    qInstallMessageHandler(FreyaLog::FreyaLogMessage);
+    qputenv("path", qgetenv("path").append(QString(";%1;%2").arg(MODULEDIR).arg(MODULEDEPENDDIR)));
 
     QString launchKey = "";
     if (1 < argc)

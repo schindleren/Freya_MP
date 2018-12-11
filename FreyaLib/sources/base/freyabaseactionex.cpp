@@ -11,8 +11,9 @@ FreyaBaseActionEx::FreyaBaseActionEx(FreyaBaseControl *pControl, const char *obj
 
 FreyaBaseActionEx::~FreyaBaseActionEx()
 {
-    qDebug() << "FreyaLib > " << this << "terminate";
+    qDebug() << "FreyaLib > " << m_FreyaBaseControl->GetActionObjectName(this) << this << "terminate";
     m_FreyaBAExThread->terminate();
+    m_FreyaBAExThread->wait();
     delete m_FreyaBAExThread;
 }
 

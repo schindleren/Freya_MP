@@ -5,11 +5,13 @@
 #include "freyabasecontrol.h"
 
 #define MODULEDIR                   "./module"
+#define MODULEDEPENDDIR             "./module/depend"
+#define MODULECONFIGDIR             "./module/config"
 
 /// command
 #define FRYLAC_CMD_MODULELAUNCH     0x0000000001000000      // FreyaLaunch module launch signal
 #define FRYLAC_CMD_MODULECMD        0x0000000002000000      // command form module
-#define FRYLAC_CMD_REMOTECMD        0x0000000003000000      // command form remote
+#define FRYLAC_CMD_REMOTECMD        0x0000000003000080      // command form remote
 #define FRYLAC_CMD_REMOTEQUIT       0x0000000004000088      // quit command form remote.FreyaLaunch will quit after 1 second.
 #define FRYLAC_CMD_MODULEQUIT       0x000000000500000f      // FreyaLaunch module quit signal
 
@@ -37,7 +39,7 @@
 #define FRYLAC_FUN_LAUNCHPORT(ClassName, EXPORT_FLAG, FreyaLaunchInfo)    ClassName *pLaunchApp = NULL; \
                                             extern "C" EXPORT_FLAG const char * FreyaModuleInfor() \
                                             { return FreyaLaunchInfo; } \
-                                            extern "C" EXPORT_FLAG bool FreyaModulePreLaunch() \
-                                            { return (pLaunchApp = new ClassName());}
+                                            extern "C" EXPORT_FLAG bool FreyaModulePreLaunch(FreyaBaseControl *pLaunchControl) \
+                                            { return (FreyaBaseControl::GetFreyaControl(pLaunchControl) && (pLaunchApp = new ClassName())); }
 
 #endif // FREYA_GLOBAL_H

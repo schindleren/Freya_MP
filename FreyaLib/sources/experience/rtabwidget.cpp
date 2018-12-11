@@ -11,9 +11,9 @@
  004     Ren Dan       2014-10-20   Add QButtonGroup and delete QList<QToolButton*>
  005     Ren Dan       2015-07-23   Remove parameter of tab direction at construct funcation
  006     Ren Dan       2015-07-23   Add tab close button
+ 007     Ren Dan       2018-12-08   Add tab text direction
 *******************************************************************************/
 #include "rtabwidget.h"
-
 
 RTabButton::RTabButton(QWidget *parent):
     QToolButton(parent)
@@ -41,7 +41,8 @@ void RTabButton::SetCloseable(bool closeable)
 
 RTabWidget::RTabWidget(QWidget *parent, bool isExpand):
     QWidget(parent), m_isExpand(isExpand), m_nTabBKWidth(100), m_nTabBKHeight(30),
-    m_nTabWidth(100), m_nTabHeight(30), m_isTabCloseable(false), m_CloseBtnSize(QSize(0, 0))
+    m_nTabWidth(100), m_nTabHeight(30), m_isTabCloseable(false), m_CloseBtnSize(QSize(0, 0)),
+    m_TabTextDirection(RTabSite::eHorizontal)
 {
     InitWidget();
 }
@@ -121,6 +122,33 @@ void RTabWidget::SetTabSite(const RTabSite::site &site)
         break;
     default:
         break;
+    }
+}
+
+void RTabWidget::SetTabDirection(const RTabSite::direction &direction)
+{
+    if(m_TabTextDirection != direction)
+    {
+        m_TabTextDirection = direction;
+        QList<QAbstractButton*> btnList = m_TabBtnGroup->buttons();
+        foreach (QAbstractButton *btn, btnList)
+        {
+            QString tabText = btn->text();
+            if(RTabSite::eVertical == m_TabTextDirection)
+            {
+                QString newStr;
+                for(int i = 0; i < tabText.length(); ++i)
+                {
+                    newStr.append(tabText.at(i));
+                    newStr.append("\n");
+                }
+                btn->setText(newStr);
+            }
+            else if(RTabSite::eHorizontal == m_TabTextDirection)
+            {
+                btn->setText(tabText.remove("\n"));
+            }
+        }
     }
 }
 
@@ -213,8 +241,20 @@ void RTabWidget::AddTabAndWidget(QWidget* tabWidget, const QString &objName, con
 {
     RTabButton *nTabBtn = new RTabButton(this);
     nTabBtn->setObjectName(objName.isEmpty()?tabWidget->objectName():objName);
-    nTabBtn->setMouseTracking(true);
-    nTabBtn->setText(tabTitle);
+    if(RTabSite::eVertical == m_TabTextDirection)
+    {
+        QString newStr;
+        for(int i = 0; i < tabTitle.length(); ++i)
+        {
+            newStr.append(tabTitle.at(i));
+            newStr.append("\n");
+        }
+        nTabBtn->setText(newStr);
+    }
+    else
+    {
+        nTabBtn->setText(tabTitle);
+    }
     nTabBtn->setIcon(tabIcon);
     nTabBtn->setCheckable(true);
     nTabBtn->SetCloseable(m_isTabCloseable);

@@ -67,15 +67,28 @@ private:
     FreyaCommandDistribution            m_CMDDistribution;
 
 public:
-    static FreyaBaseControl *GetFreyaControl()
+    static FreyaBaseControl *GetFreyaControl(FreyaBaseControl *pOtherControl = NULL)
     {
-        static FreyaBaseControl *pFreyaBaseControl = NULL;
-        if(NULL == pFreyaBaseControl)
+        static FreyaBaseControl *s_pFreyaBaseControl = NULL;
+        if(NULL == pOtherControl)
         {
-            pFreyaBaseControl = new FreyaBaseControl();
-            qDebug()<<"FreyaLib > "<<"Structure FreyaBaseControl"<<pFreyaBaseControl;
+            if(NULL == s_pFreyaBaseControl)
+            {
+                s_pFreyaBaseControl = new FreyaBaseControl();
+                qDebug() << "FreyaLib > " << "Structure FreyaBaseControl" << s_pFreyaBaseControl;
+            }
         }
-        return pFreyaBaseControl;
+        else
+        {
+            qDebug() << "FreyaLib > " << "SetFreyaControl" << pOtherControl;
+            if(NULL != s_pFreyaBaseControl)
+            {
+                delete s_pFreyaBaseControl;
+                s_pFreyaBaseControl = NULL;
+            }
+            s_pFreyaBaseControl = pOtherControl;
+        }
+        return s_pFreyaBaseControl;
     }
 };
 

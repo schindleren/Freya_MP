@@ -15,6 +15,7 @@ class FREYALIBSHARED_EXPORT FreyaBasePlugin : public QLocalSocket, public FreyaB
     Q_OBJECT
 public:
     explicit FreyaBasePlugin(QString PlatformID, FreyaBaseControl *pControl = NULL, const char *objectName = NULL);
+    ~FreyaBasePlugin();
     bool PluginConnected();
     bool ImportPluginAuth(const QStringList &MsgCode, const QStringList &CmdCode);
 

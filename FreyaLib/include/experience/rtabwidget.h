@@ -11,6 +11,7 @@
  004     Ren Dan       2014-10-20   Add QButtonGroup and delete QList<QToolButton*>
  005     Ren Dan       2015-07-23   Remove parameter of tab direction at construct funcation
  006     Ren Dan       2015-07-23   Add tab close button
+ 007     Ren Dan       2018-12-08   Add tab text direction
 *******************************************************************************/
 #ifndef RTABWIDGET_H
 #define RTABWIDGET_H
@@ -31,6 +32,12 @@ namespace RTabSite
         eSiteTop = 1,
         eSiteRight = 2,
         eSiteBottom = 3
+    };
+
+    enum direction
+    {
+        eHorizontal = 0,
+        eVertical = 1,
     };
 }
 
@@ -127,6 +134,16 @@ public:
   Return: void
 ****************************************************/
     void SetTabSite(const RTabSite::site &site);
+
+/***************************************************
+  Author: RenDan
+  Date: 2018-12-08
+  Description: Set direction of tab text
+  Input: RTabWidget::direction
+  Output: void
+  Return: void
+****************************************************/
+    void SetTabDirection(const RTabSite::direction &direction);
 
 /***************************************************
   Author: RenDan
@@ -294,6 +311,8 @@ private:
 
     bool                    m_isTabCloseable;
     QSize                   m_CloseBtnSize;
+
+    RTabSite::direction     m_TabTextDirection;
 };
 
 #endif // RTABWIDGET_H

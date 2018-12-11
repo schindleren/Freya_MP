@@ -15,6 +15,17 @@ FreyaBasePlugin::FreyaBasePlugin(QString PlatformID, FreyaBaseControl *pControl,
         FreyaData data = FreyaBaseData::CreateDate();
         data->command = FREYALIB_CMD_PLUGINREQUEST;
         write(FreyaBaseData::Serialize(data));
+        flush();
+    }
+}
+
+FreyaBasePlugin::~FreyaBasePlugin()
+{
+    if(m_Pusher)
+    {
+        m_Pusher->disconnectFromServer();
+        qDebug()<<"FreyaLib > "<<"Freya Plugin:"<<m_PluginServer->serverName()<<"disconnect:"<<m_Pusher->waitForDisconnected(1000);
+        m_Pusher->deleteLater();
     }
 }
 
@@ -51,6 +62,7 @@ void FreyaBasePlugin::PluginWrite(const FreyaData pData)
     {
         pData->SetArgument(FREYALIB_FLG_PLUGINID, m_PluginServer->serverName());
         m_Pusher->write(FreyaBaseData::Serialize(pData));
+        m_Pusher->flush();
         qDebug()<<"FreyaLib > " << "FreyaBasePlugin:" << "PluginWriteData" << hex << pData->command;
     }
 }
@@ -69,6 +81,7 @@ void FreyaBasePlugin::OnReadyRead()
         connectData->command = FREYALIB_CMD_CONNECTREQUEST;
         connectData->SetArgument(m_PluginServer->serverName());
         write(FreyaBaseData::Serialize(connectData));
+        flush();
     }
 }
 

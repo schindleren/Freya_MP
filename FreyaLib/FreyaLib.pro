@@ -15,7 +15,7 @@ TARGET = $$FREYALIB_NAME
 
 TEMPLATE = lib
 
-QMAKE_TARGET_COMPANY = "SchindlerenDesign"
+QMAKE_TARGET_COMPANY = SchindlerenDesign
 QMAKE_TARGET_PRODUCT = FreyaLib
 QMAKE_TARGET_DESCRIPTION = C++ application development framework.
 QMAKE_TARGET_COPYRIGHT = Copyright (C) SchindlerenDesign
@@ -39,7 +39,8 @@ SOURCES += sources/freyalib.cpp \
     sources/base/freyabaseextension.cpp \
     sources/base/freyabaseplugin.cpp \
     sources/base/freyabaseactionex.cpp \
-    sources/experience/singleapplication.cpp
+    sources/experience/singleapplication.cpp \
+    sources/experience/freyalog.cpp
 
 HEADERS += include/freyalib.h \
     include/freyalib_global.h \
@@ -54,7 +55,8 @@ HEADERS += include/freyalib.h \
     include/base/freyabaseextension.h \
     include/base/freyabaseplugin.h \
     include/base/freyabaseactionex.h \
-    include/experience/singleapplication.h
+    include/experience/singleapplication.h \
+    include/experience/freyalog.h
 
 contains(QT, gui) {
 SOURCES += sources/gui/freyawindow.cpp \

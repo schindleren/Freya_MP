@@ -28,12 +28,13 @@ void FreyaRemote::ShowHelp(const char *appName)
     fprintf(stderr, "Usage: %s [options] \n\n"
                     "  h, help                 display this help and exit\n"
                     "  q, quit                 stop FreyaLaunch and exit\n"
+                    "  e, expansion            expansion command and exit\n"
             "\n", appName);
 }
 
 void FreyaRemote::OnPluginConnected(bool isConnected)
 {
-    if(isConnected && m_FreyaPlugin->ImportPluginAuth(QStringList()<<FRYLAC_COD_MSG1<<FRYLAC_COD_MSG2<<FRYLAC_COD_MSG4<<FRYLAC_COD_MSG8,
+    if(isConnected && m_FreyaPlugin->ImportPluginAuth(QStringList(),
                                                        QStringList()<<FRYLAC_COD_CMD1<<FRYLAC_COD_CMD2<<FRYLAC_COD_CMD4<<FRYLAC_COD_CMD8))
     {
         QTimer::singleShot(1000, this, SLOT(OnSendCommand()));
@@ -58,10 +59,20 @@ void FreyaRemote::OnSendCommand()
         else
         {
             FreyaData pData = FreyaBaseData::CreateDate(FRYLAC_CMD_REMOTECMD);
-            pData->SetArgument(opt);
+            QStringList optList;
+            for(; arg < m_argc; ++arg)
+            {
+                optList.append(QString::fromLocal8Bit(m_argv[arg]));
+            }
+            pData->SetArgument(optList);
             m_FreyaPlugin->PluginWrite(pData);
         }
-        ++arg;
     }
+    else
+    {
+        ShowHelp("FreyaRemote");
+    }
+
+    m_FreyaPlugin->deleteLater();
     QTimer::singleShot(1000, qApp, SLOT(quit()));
 }

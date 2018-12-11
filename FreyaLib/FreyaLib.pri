@@ -1,21 +1,31 @@
 QT      += core gui widgets network
 #QT      -= gui widgets
 
-unix {
-SVNVER = $$system(svn info | grep 'Changed\ Rev' | cut -b 19-)
-isEmpty($$SVNVER){
-SVNVER = $$system(svn info | grep '最后修改的版本' | cut -b 24-)
-}
-} win32 { SVNVER = 16 }
-
-VERSION = 5.3.0.$$SVNVER
-DEFINES += FREYAVER=\\\"$$VERSION\\\"
-
 CONFIG(debug, debug|release) {
     FREYALIB_NAME = FreyaLib_d
 } else {
     FREYALIB_NAME = FreyaLib
 }
+
+unix{
+SVNVER = $$system(svn info | grep 'Changed\ Rev' | cut -b 19-)
+isEmpty(SVNVER){
+SVNVER = $$system(svn info | grep '最后修改的版本' | cut -b 24-)
+}
+}
+win32{
+#SVNVER = $$system(for /f \"delims=\" %i in (\'svn info ^| findstr \"Revision\"\') do set rev=%i ^| echo %rev:~10%)
+VERSTR = $$system('svn info | findstr "Revision"')
+SVNVER = $$replace(VERSTR, Revision: , )
+}
+isEmpty(SVNVER){
+SVNVER = 90
+message("faild to read svn version, use default version:$${SVNVER}")
+}
+VERSION = 5.4.3.$$SVNVER
+DEFINES += FREYAVER=\\\"$$VERSION\\\"
+
+message("$${FREYALIB_NAME} version:$${VERSION}")
 
 FREYALIB_INCLUDEPATH = $$PWD/include \
                         $$PWD/include/abstract \

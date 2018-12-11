@@ -24,7 +24,7 @@ enum ConfModType{
 
 class FreyaBaseJson;
 class FreyaBaseAction;
-struct FreyaBaseData;
+class FreyaBaseData;
 
 typedef QSharedPointer<FreyaBaseData> FreyaData;
 

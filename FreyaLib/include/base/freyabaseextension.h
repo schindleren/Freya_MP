@@ -9,6 +9,9 @@
 #include <QLocalServer>
 #include <QLocalSocket>
 #include <QThread>
+#include <QMutex>
+#include <QMutexLocker>
+#include <QSharedPointer>
 
 /*
  * Types of support
@@ -26,15 +29,14 @@ public:
     QString &FreyaPluginID();
 
 signals:
-    void ToDisconnected();
     void ToPluginRequest(const FreyaData pData);
+    void ToDisconnected();
 
 private slots:
     void OnReadyRead();
     void OnStateChanged(QLocalSocket::LocalSocketState state);
 
 private:
-    QThread                             m_Thread;
     QLocalSocket                        *m_Pusher;
     int                                 m_MsgAuth;
     int                                 m_CmdAuth;
@@ -47,6 +49,7 @@ class FREYALIBSHARED_EXPORT FreyaBaseExtension : public QLocalServer, public Fre
     Q_OBJECT
 public:
     explicit FreyaBaseExtension(QString PlatformID, FreyaBaseControl *pControl = NULL, const char *objectName = NULL);
+    ~FreyaBaseExtension();
     bool DefineAuthCode(const QStringList &MsgAuth, const QStringList &CmdAuth);
 
 protected:
@@ -63,6 +66,8 @@ private:
     QStringList                         m_WaitPluginIDList;
     FreyaBaseControl                    *m_FreyaControl;
     bool                                m_isListening;
+    QMutex                              m_PluginListMutex;
+    QThread                             *m_Thread;
 };
 
 #endif // FREYABASEEXTENSION_H

@@ -7,16 +7,20 @@
 
 #include <QtCore>
 
-class FreyaLaunch : public FreyaBaseAction
+class FreyaLaunch : public FreyaBaseActionEx
 {
+    Q_OBJECT
 public:
     FreyaLaunch(QString launchKey = "");
     ~FreyaLaunch();
 
     void launch();
 
-protected:
-    virtual void Execute(const FreyaData data);
+protected slots:
+    virtual void OnExecuteEx(const FreyaData data);
+
+private slots:
+    void OnQuit();
 
 private:
     void LoadModules();

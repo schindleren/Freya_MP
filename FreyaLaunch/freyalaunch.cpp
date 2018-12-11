@@ -1,28 +1,33 @@
 #include "freyalaunch.h"
-#include "freyabaseextension.h"
 
 #include "freya_global.h"
 
 typedef const char * (*ModuleInforFun)();
-typedef bool (*ModulePreLaunchFun)();
+typedef bool (*ModulePreLaunchFun)(FreyaBaseControl *pLaunchControl);
+
+#ifdef Q_OS_WIN
+QString ModuleSuffix("dll");
+#elif Q_OS_LINUX
+QString ModuleSuffix("so");
+#endif
 
 FreyaLaunch::FreyaLaunch(QString launchKey) :
-    FreyaBaseAction(FreyaBaseControl::GetFreyaControl(), FRYLAC_OBJ_LAUNCHER),
+    FreyaBaseActionEx(FreyaBaseControl::GetFreyaControl(), FRYLAC_OBJ_LAUNCHER),
     m_LaunchKey(launchKey)
 {
+    qDebug() << "FreyaLaunch > " << "Freya Version:" << FreyaBaseControl::GetFreyaControl()->FreyaVersion();
     RegisterCommands();
 
-    qDebug() << "FreyaLaunch > " << "Freya Version:" << FreyaBaseControl::GetFreyaControl()->FreyaVersion();
-#ifdef  __linux
+#ifdef  Q_OS_LINUX
     system(QString("rm /tmp/%1").arg(FRYLAC_COD_PLATFORMID).toUtf8().constData());
 #endif
     bool listening = (new FreyaBaseExtension(FRYLAC_COD_PLATFORMID, FreyaBaseControl::GetFreyaControl() , FRYLAC_OBJ_PLUGINEXT)) \
-                            ->DefineAuthCode(QStringList()<<FRYLAC_COD_MSG1<<FRYLAC_COD_MSG2<<FRYLAC_COD_MSG4<<FRYLAC_COD_MSG8,
-                                            QStringList()<<FRYLAC_COD_CMD1<<FRYLAC_COD_CMD2<<FRYLAC_COD_CMD4<<FRYLAC_COD_CMD8);
+            ->DefineAuthCode(QStringList()<<FRYLAC_COD_MSG1<<FRYLAC_COD_MSG2<<FRYLAC_COD_MSG4<<FRYLAC_COD_MSG8,
+                             QStringList()<<FRYLAC_COD_CMD1<<FRYLAC_COD_CMD2<<FRYLAC_COD_CMD4<<FRYLAC_COD_CMD8);
 
     if(!listening)
     {
-#ifdef  __linux
+#ifdef  Q_OS_LINUX
         qWarning() << "FreyaLaunch > " << "Cannot listened from plugin platform. Please check /tmp/ has no file named:" << FRYLAC_COD_PLATFORMID << ".";
 #else
         qWarning() << "FreyaLaunch > " << "Cannot listened from plugin platform: " << FRYLAC_COD_PLATFORMID << ".";
@@ -34,41 +39,62 @@ FreyaLaunch::FreyaLaunch(QString launchKey) :
 
 FreyaLaunch::~FreyaLaunch()
 {
-    foreach(QLibrary* lib, m_ModuleList)
-    {
-        lib->unload();
-        lib->deleteLater();
-    }
-#ifdef  __linux
-    system(QString("rm /tmp/%1").arg(FRYLAC_COD_PLATFORMID).toUtf8().constData());
-#endif
+    qDebug() << "FreyaLaunch > " << "FreyaLaunch is quit!";
 }
 
 void FreyaLaunch::launch()
 {
-    FREYA_REQUESTEXECUTION(FRYLAC_CMD_MODULELAUNCH);
+//    FREYA_REQUESTEXECUTION(FRYLAC_CMD_MODULELAUNCH);
 }
 
-void FreyaLaunch::Execute(const FreyaData data)
+void FreyaLaunch::OnExecuteEx(const FreyaData data)
 {
     auto RemoteQuit = [&]{
         qDebug() << "FreyaLaunch > " << "get command FRYLAC_CMD_REMOTEQUIT. Application will quit soon.";
         FREYA_REQUESTEXECUTION(FRYLAC_CMD_MODULEQUIT);
-        QTimer::singleShot(1000, qApp, SLOT(quit()));
+        QTimer::singleShot(1000, this, SLOT(OnQuit()));
     };
 
     auto RemoteCMD = [&]{
-        // FreyaRemote addlib#xxx.so
-        QString arg = data->GetArgument().toString();
-        QStringList argList = arg.split("#");
-        if(arg.startsWith("addlib") && argList.size() > 1)
+        // FreyaRemote addlib xxx.so
+        // FreyaRemote addes x:/xxx.xx
+        QStringList argList = data->GetArgument().toStringList();
+        qDebug() << "FreyaLaunch > " << "FreyaRemote command:" << argList;
+        if((0 == argList.first().compare("addlib", Qt::CaseInsensitive)) && argList.size() > 1)
         {
-            LoadLibrary(argList.at(1));
+            QFile libFile(argList.at(1));
+            if(libFile.exists())
+            {
+                if(LoadLibrary(argList.at(1)))
+                {
+                    QFileInfo libInfo(libFile);
+                    libFile.copy(QString(MODULEDIR) + QDir::separator() + libInfo.baseName() + "." + ModuleSuffix);
+                }
+            }
         }
     };
 
     FREYACONNECT(FRYLAC_CMD_REMOTEQUIT, RemoteQuit());
     FREYACONNECT(FRYLAC_CMD_REMOTECMD, RemoteCMD());
+}
+
+void FreyaLaunch::OnQuit()
+{
+    qDebug() << "FreyaLaunch > " << "destory objects.";
+    FreyaBaseControl::GetFreyaControl()->DeleteAllAction(QStringList()<<FRYLAC_OBJ_LAUNCHER);
+
+    foreach(QLibrary* lib, m_ModuleList)
+    {
+        lib->unload();
+        lib->deleteLater();
+    }
+#ifdef  Q_OS_LINUX
+    system(QString("rm /tmp/%1").arg(FRYLAC_COD_PLATFORMID).toUtf8().constData());
+#endif
+
+    qApp->quit();
+
+//    QTimer::singleShot(2000, qApp, SLOT(quit()));
 }
 
 void FreyaLaunch::LoadModules()
@@ -77,18 +103,7 @@ void FreyaLaunch::LoadModules()
     if(moduleDir.exists())
     {
         QStringList nameFilte;
-
-#ifdef Q_OS_WIN
-        nameFilte.append("*.dll");
-#else
-#ifdef Q_OS_LINUX
-    #ifdef QT_DEBUG
-        nameFilte.append("*_d.so");
-    #else
-        nameFilte.append("*.so");
-    #endif
-#endif
-#endif
+        nameFilte.append(QString("*.%1").arg(ModuleSuffix));
 
         QFileInfoList moduleFileList = moduleDir.entryInfoList(nameFilte, QDir::NoDotAndDotDot | QDir::Files, QDir::Name);
         foreach (const QFileInfo &moduleFile, moduleFileList)
@@ -130,7 +145,7 @@ bool FreyaLaunch::LoadLibrary(const QString &filePath)
                 ModulePreLaunchFun fmPreLaunch = (ModulePreLaunchFun)lib->resolve("FreyaModulePreLaunch");
                 if(fmPreLaunch)
                 {
-                    return fmPreLaunch();
+                    return fmPreLaunch(FreyaBaseControl::GetFreyaControl());
                 }
                 return false;
             }
